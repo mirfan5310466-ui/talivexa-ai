@@ -1,0 +1,31 @@
+{
+  "name": "Talivexa AI \u2014 Created by Mr. Irfan",
+  "short_name": "Talivexa AI",
+  "description": "Full-Stack Multimodal AI Platform created by Mr. Irfan. Black & Gold edition.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#070709",
+  "theme_color": "#0e0d0a",
+  "dir": "auto",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/assets/icons/talivexa-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
