@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="obsidianBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070709"/>
+      <stop offset="100%" stop-color="#17140d"/>
+    </linearGradient>
+    <linearGradient id="goldPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff0b3"/>
+      <stop offset="35%" stop-color="#eab308"/>
+      <stop offset="75%" stop-color="#ca8a04"/>
+      <stop offset="100%" stop-color="#854d0e"/>
+    </linearGradient>
+    <linearGradient id="goldAccent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#fef08a"/>
+    </linearGradient>
+    <filter id="goldGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#obsidianBg)" stroke="#eab308" stroke-width="8" stroke-opacity="0.65"/>
+  <rect x="24" y="24" width="464" height="464" rx="96" fill="none" stroke="#facc15" stroke-width="2" stroke-opacity="0.22"/>
+  <!-- Architectural Crown Top Bar of T -->
+  <path d="M116 134 L396 134 L396 184 L284 184 L284 388 L228 388 L228 184 L116 184 Z" fill="url(#goldPrimary)" filter="url(#goldGlow)"/>
+  <!-- AI Neural Diamond Core -->
+  <polygon points="256,84 282,110 256,136 230,110" fill="url(#goldAccent)"/>
+  <!-- Subtle Highlight Edge -->
+  <path d="M116 134 L396 134 L396 146 L116 146 Z" fill="#ffffff" opacity="0.45"/>
+</svg>
