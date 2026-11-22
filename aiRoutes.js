@@ -1,6 +1,6 @@
 
 const express = require('express');
-const { generateAIResponse } = require('../ai-server');
+const { generateAIResponse } = require('../aiService');
 
 const router = express.Router();
 
@@ -21,6 +21,7 @@ router.post('/chat', async (req, res) => {
     });
 
     return res.json(result);
+
   } catch (error) {
     console.error('AI route error:', error);
 
