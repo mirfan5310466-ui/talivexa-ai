@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0e0d0a" />
+  <title>Talivexa AI — Created by Mr. Irfan</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/talivexa-logo.svg" />
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-logo-box">
+      <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI Logo" />
+    </div>
+    <div class="splash-brand">Talivexa AI</div>
+    <div class="splash-by">Created by Mr. Irfan</div>
+  </div>
+
+  <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleDrawer(false)"></div>
+
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="brand-bar">
+        <a href="#" class="brand-identity" onclick="openSection('chat'); return false;">
+          <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI Logo" class="brand-logo-img" />
+          <div>
+            <div class="brand-title">Talivexa AI</div>
+            <div class="brand-sub">Created by Mr. Irfan</div>
+          </div>
+        </a>
+        <button class="burger-btn" onclick="toggleDrawer(false)">✕</button>
+      </div>
+
+      <button class="btn-new-session" onclick="startNewConversation()">
+        <span data-i18n="newSession">New Chat</span>
+        <span>+</span>
+      </button>
+
+      <div class="sidebar-nav">
+        <div class="nav-group-title">AI Modules</div>
+        <button class="nav-btn active" data-sec="chat" onclick="openSection('chat')">
+          <span class="dot dot-chat"></span> <span data-i18n="navChat">AI Chat Assistant</span>
+        </button>
+        <button class="nav-btn" data-sec="search" onclick="openSection('search')">
+          <span class="dot dot-search"></span> <span data-i18n="navSearch">AI Web Search</span>
+        </button>
+        <button class="nav-btn" data-sec="voice" onclick="openSection('voice')">
+          <span class="dot dot-voice"></span> <span data-i18n="navVoice">AI Voice Assistant</span>
+        </button>
+        <button class="nav-btn" data-sec="image" onclick="openSection('image')">
+          <span class="dot dot-image"></span> <span data-i18n="navImage">AI Image Studio</span>
+        </button>
+        <button class="nav-btn" data-sec="pdf" onclick="openSection('pdf')">
+          <span class="dot dot-pdf"></span> <span data-i18n="navPdf">PDF & Doc Analyzer</span>
+        </button>
+        <button class="nav-btn" data-sec="smart" onclick="openSection('smart')">
+          <span class="dot dot-smart"></span> <span data-i18n="navSmart">Smart AI Tools</span>
+        </button>
+
+        <div class="nav-group-title">Account, Plans & Founder</div>
+        <button class="nav-btn" data-sec="dashboard" onclick="openSection('dashboard')">
+          <span>◈</span> <span data-i18n="navDashboard">User Dashboard</span>
+        </button>
+        <button class="nav-btn" data-sec="profile" onclick="openSection('profile')">
+          <span>◉</span> <span data-i18n="navProfile">Profile & Settings</span>
+        </button>
+        <button class="nav-btn" data-sec="plans" onclick="openSection('plans')">
+          <span>❖</span> <span data-i18n="navPlans">Subscription Plans</span>
+        </button>
+        <button class="nav-btn" data-sec="security" onclick="openSection('security')">
+          <span>⛨</span> <span data-i18n="navSecurity">Security & API Settings</span>
+        </button>
+        <button class="nav-btn" data-sec="founder" onclick="openSection('founder')">
+          <span>★</span> <span>Founder (Mr. Irfan)</span>
+        </button>
+
+        <div class="nav-group-title" data-i18n="historyTitle">Chat History</div>
+        <div id="history-list"></div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="credit-row">
+          <span data-i18n="creditsTitle">Credits Balance</span>
+          <span class="credit-val js-credits">100</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>
+            <div class="js-username" style="font-size:0.84rem;font-weight:700;">Mr. Irfan</div>
+            <div class="js-plan" style="font-size:0.72rem;color:#eab308;">FREE PLAN</div>
+          </div>
+          <div style="display:flex;gap:5px;">
+            <button class="btn-outline-gold" style="padding:5px 8px;font-size:0.74rem;" onclick="openAuth('login')">Login</button>
+            <button class="btn-gold" style="padding:5px 8px;font-size:0.74rem;" onclick="openAuth('signup')">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-group">
+          <button class="burger-btn" onclick="toggleDrawer(true)">☰</button>
+          <select id="model-selector" class="select-ctrl">
+            <option value="talivexa-gold-pro">Talivexa Gold Pro</option>
+            <option value="talivexa-fast">Talivexa Instant</option>
+          </select>
+        </div>
+
+        <div class="topbar-group">
+          <button id="pwa-install-btn" class="btn-gold btn-install" style="padding:6px 11px;font-size:0.78rem;" onclick="triggerPWAInstall()">
+            <span data-i18n="installApp">Install App</span>
+          </button>
+
+          <select id="lang-selector" class="select-ctrl">
+            <option value="en">English</option>
+            <option value="ur">اردو (RTL)</option>
+            <option value="ar">العربية (RTL)</option>
+            <option value="hi">हिन्दी</option>
+            <option value="zh">中文</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+          </select>
+        </div>
+      </header>
+
+      <!-- 1. AI CHAT ASSISTANT -->
+      <main id="panel-chat" class="view-panel active">
+        <div class="chat-wrap">
+          <div id="chat-stream" class="chat-stream">
+            <div class="chat-hero-empty">
+              <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI" />
+              <h1 data-i18n="welcomeTitle">Talivexa AI — Intelligence Reimagined</h1>
+              <p data-i18n="welcomeSub" style="color:#b5ad9c;font-size:0.9rem;margin-top:4px;">Created by Mr. Irfan • Black & Gold Multimodal AI Platform</p>
+              <div class="starter-grid">
+                <button class="starter-btn" onclick="sendPresetPrompt('Create a launch checklist for Talivexa AI')">✦ Create a launch checklist for Talivexa AI</button>
+                <button class="starter-btn" onclick="sendPresetPrompt('Explain how server-side API keys protect secrets')">⛨ Explain server-side API key security</button>
+                <button class="starter-btn" onclick="sendPresetPrompt('Write a business overview of Talivexa AI by Mr. Irfan')">★ Business overview of Talivexa AI</button>
+                <button class="starter-btn" onclick="sendPresetPrompt('How do I package this PWA for Google Play Store?')">◈ Package PWA for Google Play Store</button>
+              </div>
+            </div>
+          </div>
+
+          <template id="chat-empty-tpl">
+            <div class="chat-hero-empty">
+              <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI" />
+              <h1 data-i18n="welcomeTitle">Talivexa AI — Intelligence Reimagined</h1>
+              <p data-i18n="welcomeSub" style="color:#b5ad9c;font-size:0.9rem;margin-top:4px;">Created by Mr. Irfan • Black & Gold Multimodal AI Platform</p>
+            </div>
+          </template>
+
+          <div class="composer-shell">
+            <textarea id="chat-prompt-input" class="composer-input" rows="1" data-i18n-ph="chatPlaceholder" placeholder="Message Talivexa AI..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitChatPrompt();}"></textarea>
+            <div class="composer-bar">
+              <div style="display:flex;gap:7px;">
+                <button id="search-mode-chip" class="mode-chip" onclick="toggleSearchMode()">● <span data-i18n="webSearch">Web Search</span></button>
+                <button class="mode-chip" onclick="openSection('pdf')">● PDF</button>
+              </div>
+              <div style="display:flex;gap:7px;">
+                <button class="round-act" onclick="startVoiceCapture(true)" title="Voice">🎙</button>
+                <button class="round-act send-gold" onclick="submitChatPrompt()" title="Send">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- 2. AI WEB SEARCH -->
+      <section id="panel-search" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2 style="color:#34d399;-webkit-text-fill-color:#34d399;">AI Web Search <span class="pill-config">Requires Search API Key</span></h2>
+            <p>Grounded search queries routed through <code>/api/ai/chat</code> with <code>webSearch: true</code>.</p>
+          </div>
+          <div class="card">
+            <label>Search Query</label>
+            <input id="search-box-input" type="text" class="field" placeholder="Enter topic to research..." />
+            <button class="btn-gold" style="background:#10b981;color:#05140e;" onclick="sendPresetPrompt(document.getElementById('search-box-input').value || 'Latest AI news'); toggleSearchMode();">Run Grounded Search</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. AI VOICE ASSISTANT -->
+      <section id="panel-voice" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2 style="color:#fdba74;-webkit-text-fill-color:#fdba74;">AI Voice Assistant <span class="pill-live">Browser Speech API</span></h2>
+            <p>Speak into your device microphone and listen to spoken responses.</p>
+          </div>
+          <div class="card">
+            <button class="btn-gold" style="background:#f97316;color:#fff;" onclick="startVoiceCapture(false)">Start Microphone Capture</button>
+            <p id="voice-heard" style="margin-top:14px;color:#fdba74;font-weight:700;"></p>
+            <p id="voice-answer" style="margin-top:8px;white-space:pre-wrap;"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. AI IMAGE STUDIO -->
+      <section id="panel-image" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2 style="color:#d8b4fe;-webkit-text-fill-color:#d8b4fe;">AI Image Generation Studio <span class="pill-live">Canvas Active</span> <span class="pill-config">Image API Optional</span></h2>
+            <p>Generate custom artworks on Canvas now, or wire an external image model in <code>server/services/aiService.js</code>.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <label>Prompt</label>
+              <textarea id="img-prompt" class="field" rows="3" placeholder="Describe your visual concept..."></textarea>
+              <label>Color Palette</label>
+              <select id="img-style" class="field">
+                <option value="gold_obsidian">Black & Gold</option>
+                <option value="violet_royal">Royal Violet</option>
+                <option value="emerald_cyber">Emerald Jade</option>
+                <option value="crimson_forge">Crimson Gold</option>
+              </select>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-gold" style="background:#a855f7;color:#fff;" onclick="generateStudioImage()">Generate (3 Credits)</button>
+                <button class="btn-outline-gold" onclick="downloadStudioPNG()">Download PNG</button>
+              </div>
+            </div>
+            <div class="card" style="display:flex;align-items:center;justify-content:center;">
+              <canvas id="studio-canvas" width="460" height="460" style="max-width:100%;height:auto;border-radius:14px;"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. PDF & DOCUMENT ANALYZER -->
+      <section id="panel-pdf" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2 style="color:#5eead4;-webkit-text-fill-color:#5eead4;">PDF & Document Analyzer <span class="pill-live">Client Reader Active</span></h2>
+            <p>Upload text or PDF files and search/ask questions against extracted text.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <label>Select Document (.pdf, .txt, .md, .csv)</label>
+              <input type="file" accept=".pdf,.txt,.md,.csv" class="field" onchange="readUploadedDoc(event)" />
+              <div id="doc-status" style="color:#5eead4;font-weight:700;margin-bottom:8px;">No file selected</div>
+              <pre id="doc-preview" style="white-space:pre-wrap;font-size:0.84rem;color:#b5ad9c;"></pre>
+            </div>
+            <div class="card">
+              <label>Ask About Document</label>
+              <input id="doc-q" type="text" class="field" placeholder="Ask a question..." />
+              <button class="btn-gold" style="background:#14b8a6;color:#041412;" onclick="queryDocument()">Analyze (1 Credit)</button>
+              <pre id="doc-ans" style="margin-top:12px;white-space:pre-wrap;font-size:0.86rem;"></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. SMART AI TOOLS -->
+      <section id="panel-smart" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2 style="color:#fda4af;-webkit-text-fill-color:#fda4af;">Smart AI Tools <span class="pill-live">Active</span></h2>
+            <p>Quick generators for code snippets, marketing copy, and executive summaries.</p>
+          </div>
+          <div class="card">
+            <label>Tool Mode</label>
+            <select id="smart-kind" class="field">
+              <option value="script">Code / Workflow Generator</option>
+              <option value="copy">Copywriting & Headlines</option>
+              <option value="summary">Structured Summary</option>
+            </select>
+            <label>Topic</label>
+            <input id="smart-topic" type="text" class="field" placeholder="Enter topic..." />
+            <button class="btn-gold" style="background:#f43f5e;color:#fff;" onclick="executeSmartTool()">Run Smart Tool (1 Credit)</button>
+            <pre id="smart-out" style="margin-top:14px;padding:12px;background:#090806;border-radius:10px;white-space:pre-wrap;font-size:0.86rem;"></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. USER DASHBOARD & CREDITS -->
+      <section id="panel-dashboard" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2>User Dashboard & Credits System</h2>
+            <p>Monitor your account tier, available credits, and Talivexa AI platform status.</p>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <div style="color:#b5ad9c;font-size:0.82rem;">Account Holder</div>
+              <div class="js-username" style="font-size:1.25rem;font-weight:800;margin-top:4px;">Mr. Irfan</div>
+              <div class="js-plan" style="color:#facc15;font-size:0.78rem;margin-top:3px;">FREE PLAN</div>
+            </div>
+            <div class="card">
+              <div style="color:#b5ad9c;font-size:0.82rem;">Remaining Credits</div>
+              <div class="js-credits" style="font-size:1.75rem;font-weight:800;color:#facc15;margin-top:4px;">100</div>
+            </div>
+            <div class="card">
+              <div style="color:#b5ad9c;font-size:0.82rem;">Creator Attribution</div>
+              <div style="font-size:1.25rem;font-weight:800;margin-top:4px;">Created by Mr. Irfan</div>
+              <div style="color:#34d399;font-size:0.78rem;margin-top:3px;">Talivexa AI</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. PROFILE & SETTINGS -->
+      <section id="panel-profile" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2>User Profile & Settings</h2>
+            <p>Update display name and contact email.</p>
+          </div>
+          <div class="card" style="max-width:520px;">
+            <label>Display Name</label>
+            <input id="prof-name" type="text" class="field" placeholder="Mr. Irfan" />
+            <label>Email Address</label>
+            <input id="prof-email" type="email" class="field" placeholder="you@example.com" />
+            <button class="btn-gold" onclick="saveProfileSettings()">Save Settings</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. SUBSCRIPTION PLANS & PAYMENT STRUCTURE -->
+      <section id="panel-plans" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2>Subscription Plans & Payment Structure <span class="pill-config">Connect Payment Gateway Keys</span></h2>
+            <p>Choose Free, Pro, or Enterprise. Live checkout requires configuring payment keys in <code>.env</code>.</p>
+          </div>
+          <div class="grid-3">
+            <div class="card">
+              <h3>Free</h3>
+              <div style="font-size:1.6rem;font-weight:800;color:#facc15;margin:8px 0;">$0</div>
+              <p style="color:#b5ad9c;font-size:0.85rem;margin-bottom:14px;">100 starter credits, chat, voice, and 10 languages.</p>
+              <button class="btn-outline-gold" style="width:100%;" onclick="chooseSubscription('free')">Select Free</button>
+            </div>
+            <div class="card" style="border-color:#facc15;">
+              <h3>Pro</h3>
+              <div style="font-size:1.6rem;font-weight:800;color:#facc15;margin:8px 0;">$19 / mo</div>
+              <p style="color:#b5ad9c;font-size:0.85rem;margin-bottom:14px;">2,000 credits, search mode, studio tools, and priority API.</p>
+              <button class="btn-gold" style="width:100%;" onclick="chooseSubscription('pro')">Upgrade to Pro</button>
+            </div>
+            <div class="card">
+              <h3>Enterprise</h3>
+              <div style="font-size:1.6rem;font-weight:800;color:#facc15;margin:8px 0;">Custom</div>
+              <p style="color:#b5ad9c;font-size:0.85rem;margin-bottom:14px;">Custom credit limits, dedicated deployment, and team support.</p>
+              <button class="btn-outline-gold" style="width:100%;" onclick="chooseSubscription('enterprise')">Select Enterprise</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. SECURITY & API SETTINGS -->
+      <section id="panel-security" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2>Security & Server-Side API Architecture</h2>
+            <p>Secret API keys live strictly on the backend server in environment variables (<code>.env</code>), never exposed in frontend code.</p>
+          </div>
+          <div class="card">
+            <ul style="padding-inline-start:18px;line-height:1.9;font-size:0.9rem;color:#e7e2d8;">
+              <li><strong>Environment Secrets:</strong> Stored in <code>.env</code> on the backend server (<code>JWT_SECRET</code>, <code>AI_API_KEY</code>, <code>SEARCH_API_KEY</code>, <code>PAYMENT_SECRET_KEY</code>).</li>
+              <li><strong>Security Middleware:</strong> Helmet HTTP headers, CORS restriction, rate limiting, and input validation enabled in Express.</li>
+              <li><strong>Authentication:</strong> Password hashing with <code>bcryptjs</code> and stateless <code>JWT</code> bearer tokens.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. FOUNDER SECTION -->
+      <section id="panel-founder" class="view-panel">
+        <div class="container-box">
+          <div class="panel-heading">
+            <h2>Founder — Mr. Irfan</h2>
+            <p>Creator and owner of Talivexa AI.</p>
+          </div>
+          <div class="card founder-card">
+            <img src="/assets/images/founder-placeholder.png" alt="Founder Portrait Slot" class="founder-photo" />
+            <div>
+              <h3 style="font-size:1.3rem;color:#facc15;">Mr. Irfan</h3>
+              <p style="color:#b5ad9c;font-size:0.9rem;margin-top:6px;max-width:560px;">
+                Founder of <strong>Talivexa AI</strong>. To display your personal portrait here, save your photo as
+                <code>public/assets/images/founder-portrait.jpg</code> and update the <code>src</code> attribute in <code>public/index.html</code>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="modal-bg">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 id="auth-title">Sign In to Talivexa AI</h3>
+        <button class="btn-outline-gold" style="padding:4px 9px;" onclick="closeAuth()">✕</button>
+      </div>
+      <form onsubmit="handleAuthSubmit(event)">
+        <input id="auth-mode" type="hidden" value="login" />
+        <label>Full Name</label>
+        <input id="auth-name" type="text" class="field" placeholder="Mr. Irfan" />
+        <label>Email</label>
+        <input id="auth-email" type="email" class="field" placeholder="irfan@talivexa.ai" required />
+        <label>Password</label>
+        <input id="auth-password" type="password" class="field" placeholder="••••••••" required />
+        <button type="submit" class="btn-gold" style="width:100%;">Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
