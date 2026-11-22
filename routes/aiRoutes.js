@@ -1,12 +1,9 @@
 
 const express = require('express');
-
-// Import the AI service
-const aiService = require('../ai-service-server');
+const { generateAIResponse } = require('../aiService');
 
 const router = express.Router();
 
-// AI Chat API
 router.post('/chat', async (req, res) => {
   try {
     const { prompt, webSearch, lang } = req.body || {};
@@ -17,17 +14,7 @@ router.post('/chat', async (req, res) => {
       });
     }
 
-    // Check AI service function
-    if (
-      !aiService ||
-      typeof aiService.generateAIResponse !== 'function'
-    ) {
-      return res.status(500).json({
-        error: 'generateAIResponse function not found in AI service'
-      });
-    }
-
-    const result = await aiService.generateAIResponse({
+    const result = await generateAIResponse({
       prompt: String(prompt).trim(),
       webSearch: Boolean(webSearch),
       lang: lang || 'en'
