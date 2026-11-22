@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">Talivexa AI</title>
+  <desc id="desc">Gold TA monogram with a diamond emblem on a refined graphite background.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#24282d"/><stop offset="1" stop-color="#101317"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0b5"/><stop offset=".34" stop-color="#e8c66e"/><stop offset=".7" stop-color="#bd8b32"/><stop offset="1" stop-color="#f6df9a"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/><feOffset dy="5" result="off"/><feComponentTransfer><feFuncA type="linear" slope=".45"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <rect x="17" y="17" width="478" height="478" rx="94" fill="none" stroke="#d7b45f" stroke-opacity=".32" stroke-width="3"/>
+  <g fill="url(#gold)" filter="url(#shadow)">
+    <!-- Classical T -->
+    <path d="M72 112h212l-16 43h-69v231h-54V155H88z"/>
+    <!-- Geometric A -->
+    <path d="M302 386 371 112h48l70 274h-55l-13-59h-66l-14 59zm64-104h44l-22-96z"/>
+  </g>
+  <!-- Diamond centerpiece -->
+  <g transform="translate(0 2)" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linejoin="round">
+    <path d="M205 231h102l26 32-77 88-77-88z" fill="#171b20"/>
+    <path d="m205 231 51 120 51-120M179 263h154M256 231l-26 32 26 88 26-88z" stroke-width="4"/>
+  </g>
+  <text x="256" y="451" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="34" letter-spacing="2" fill="url(#gold)">TALIVEXA AI</text>
+</svg>
