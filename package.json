@@ -1,10 +1,11 @@
+
 {
   "name": "talivexa-ai-backend",
   "version": "1.0.0",
   "description": "Talivexa AI Full-Stack Platform created by Mr. Irfan",
-  "main": "server/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
