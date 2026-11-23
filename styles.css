@@ -12,23 +12,23 @@
    ========================================================================== */
 
 :root {
-  --bg-black: #070709;
-  --bg-elevated: #0f0e0b;
-  --bg-card: rgba(20, 18, 13, 0.88);
-  --bg-glass: rgba(11, 10, 8, 0.82);
-  --border-gold: rgba(234, 179, 8, 0.24);
-  --border-gold-strong: rgba(250, 204, 21, 0.65);
+  --bg-black: #06132d;
+  --bg-elevated: #0a1d3e;
+  --bg-card: rgba(9, 30, 65, 0.88);
+  --bg-glass: rgba(5, 19, 45, 0.88);
+  --border-gold: rgba(74, 144, 226, 0.34);
+  --border-gold-strong: rgba(96, 165, 250, 0.78);
 
   --text-primary: #faf8f5;
-  --text-secondary: #b5ad9c;
-  --text-muted: #7d7565;
+  --text-secondary: #c3d5ef;
+  --text-muted: #8ca9d0;
 
-  --gold-light: #fef08a;
-  --gold-main: #eab308;
-  --gold-deep: #a16207;
+  --gold-light: #d9edff;
+  --gold-main: #f4c542;
+  --gold-deep: #b88718;
 
   /* Distinct non-blue accents for tools */
-  --tool-chat: #eab308;
+  --tool-chat: #60a5fa;
   --tool-search: #10b981;
   --tool-voice: #f97316;
   --tool-image: #a855f7;
@@ -550,4 +550,144 @@ html[dir="rtl"] body {
   .grid-2, .grid-3, .starter-grid { grid-template-columns: 1fr; }
   .bubble-text { max-width: 92%; }
   .founder-card { flex-direction: column; text-align: center; }
-   }
+}
+
+
+/* ==========================================================================
+   BLUE / CYAN PREMIUM VISUAL SKIN
+   Keeps the existing HTML structure, component selectors and app behavior.
+   This file is served at /css/styles.css, as referenced by index.html.
+   ========================================================================== */
+
+html, body {
+  background-color: #04112a;
+  background-image:
+    radial-gradient(ellipse at 82% 12%, rgba(0, 145, 255, .22), transparent 38%),
+    radial-gradient(ellipse at 12% 78%, rgba(25, 91, 190, .18), transparent 42%),
+    linear-gradient(145deg, #06142f 0%, #071d42 52%, #030c20 100%);
+  background-attachment: fixed;
+}
+
+#splash-screen {
+  background: radial-gradient(circle at 50% 35%, #123d78 0%, #061735 58%, #030b1d 100%);
+}
+
+.sidebar {
+  background: linear-gradient(180deg, rgba(7, 27, 61, .98), rgba(3, 13, 33, .99));
+  border-inline-end-color: rgba(76, 148, 235, .35);
+}
+
+.brand-bar, .topbar {
+  border-color: rgba(80, 151, 236, .32);
+}
+
+.main-area {
+  background:
+    radial-gradient(ellipse at 85% 8%, rgba(0, 151, 255, .19), transparent 38%),
+    radial-gradient(ellipse at 12% 90%, rgba(39, 105, 214, .13), transparent 40%),
+    linear-gradient(145deg, #061633 0%, #071d40 55%, #04112b 100%);
+}
+
+.sidebar-bottom {
+  background: rgba(3, 14, 35, .96);
+  border-top-color: rgba(80, 151, 236, .3);
+}
+
+.nav-btn:hover, .history-entry:hover {
+  background: rgba(54, 139, 237, .15);
+}
+
+.nav-btn.active {
+  background: linear-gradient(110deg, rgba(34, 111, 206, .30), rgba(15, 55, 111, .45));
+  border-color: rgba(91, 165, 255, .62);
+  box-shadow: inset 3px 0 0 #55b9ff, 0 0 18px rgba(0, 126, 255, .12);
+}
+
+.btn-new-session, .btn-outline-gold, .burger-btn, .round-act {
+  border-color: rgba(89, 160, 244, .55);
+  background: linear-gradient(135deg, rgba(27, 91, 171, .42), rgba(8, 35, 79, .68));
+  color: #e5f2ff;
+}
+
+.btn-gold, .round-act.send-gold {
+  background: linear-gradient(135deg, #ffe28a 0%, #f2bf3f 52%, #c78b20 100%);
+  color: #10213b;
+  box-shadow: 0 5px 18px rgba(242, 191, 63, .18);
+}
+
+.select-ctrl, .field, .composer-shell, .modal-card {
+  background: rgba(5, 22, 51, .94);
+  border-color: rgba(82, 151, 234, .42);
+  color: #f4f8ff;
+}
+
+.card, .starter-btn, .bubble-row.ai .bubble-text {
+  background: linear-gradient(145deg, rgba(11, 39, 82, .91), rgba(5, 22, 51, .94));
+  border-color: rgba(77, 145, 228, .38);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .16);
+}
+
+.starter-btn:hover, .field:focus, .composer-shell:focus-within {
+  border-color: #58baff;
+  box-shadow: 0 0 0 3px rgba(44, 153, 255, .12);
+}
+
+.bubble-row.user .bubble-text {
+  background: linear-gradient(135deg, rgba(27, 103, 195, .42), rgba(12, 54, 112, .58));
+  border-color: rgba(94, 174, 255, .65);
+  color: #f2f8ff;
+}
+
+.bubble-row.ai .avatar-badge {
+  background: rgba(48, 132, 220, .2);
+  color: #bfe4ff;
+  border-color: rgba(91, 169, 250, .45);
+}
+
+.bubble-row.user .avatar-badge {
+  background: linear-gradient(135deg, #ffe28a, #e8ad35);
+  color: #10213b;
+}
+
+.composer-bar {
+  border-top-color: rgba(91, 163, 244, .2);
+}
+
+.mode-chip.active-search {
+  background: rgba(16, 185, 129, .18);
+}
+
+.panel-heading h2, .chat-hero-empty h1 {
+  background: linear-gradient(90deg, #f4f8ff 0%, #8bcaff 48%, #f5cf69 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.brand-title {
+  background: linear-gradient(90deg, #f6f9ff 0%, #a9d8ff 58%, #f5cf69 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.splash-brand {
+  background: linear-gradient(90deg, #ffffff, #9ed5ff, #f5cf69);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.credit-row {
+  background: rgba(24, 91, 169, .22);
+  border-color: rgba(86, 157, 239, .35);
+}
+
+::-webkit-scrollbar-track { background: #04112a; }
+::-webkit-scrollbar-thumb { background: #24558e; }
+::-webkit-scrollbar-thumb:hover { background: #60b8ff; }
+
+@media (max-width: 640px) {
+  .main-area {
+    background:
+      radial-gradient(ellipse at 75% 8%, rgba(0, 145, 255, .18), transparent 42%),
+      linear-gradient(160deg, #061633 0%, #071d40 58%, #04112b 100%);
+  }
+}
