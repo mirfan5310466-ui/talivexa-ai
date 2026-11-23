@@ -550,4 +550,4 @@ html[dir="rtl"] body {
   .grid-2, .grid-3, .starter-grid { grid-template-columns: 1fr; }
   .bubble-text { max-width: 92%; }
   .founder-card { flex-direction: column; text-align: center; }
-}
+   }
