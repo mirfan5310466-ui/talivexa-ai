@@ -1,20 +1,16 @@
-
 /* ==========================================================================
    TALIVEXA AI — Frontend Application Logic
-   Created by Mr. Irfan
-   Repaired and completed frontend version
+   Created by Mr. Irfan (Repaired Version)
    ========================================================================== */
 
 "use strict";
 
 // ---------------- SAFE STORAGE ----------------
-
 function safeGet(key, fallback = null) {
   try {
     const value = localStorage.getItem(key);
     return value === null ? fallback : value;
   } catch (error) {
-    console.warn("Storage read error:", error);
     return fallback;
   }
 }
@@ -24,7 +20,6 @@ function safeJSON(key, fallback) {
     const value = safeGet(key);
     return value ? JSON.parse(value) : fallback;
   } catch (error) {
-    console.warn("Storage JSON error:", error);
     return fallback;
   }
 }
@@ -34,13 +29,11 @@ function safeSave(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
   } catch (error) {
-    console.error("Storage error:", error);
     return false;
   }
 }
 
 // ---------------- APPLICATION STATE ----------------
-
 const appState = {
   token: safeGet("talivexa_token", ""),
   user: safeJSON("talivexa_user", null) || {
@@ -57,8 +50,52 @@ const appState = {
   installPromptEvent: null
 };
 
-// ---------------- API HELPERS ----------------
+// ---------------- INITIALIZATION ----------------
+// یہ فنکشن سب سے پہلے چلے گا تاکہ سکرین سے لوگو ہٹ جائے
+function hideSplashScreen() {
+  const splash = document.getElementById("splash-screen");
+  if (splash) {
+    setTimeout(() => {
+      splash.style.display = "none"; // لوگو کو غائب کر دیا
+    }, 900);
+  }
+}
 
+// فوراً لوگو ہٹانے کا فنکشن کال کریں
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", hideSplashScreen);
+} else {
+  hideSplashScreen();
+}
+
+// باقی ایپ کی سیٹنگز
+function initializeTalivexa() {
+  const savedLang = safeGet("talivexa_lang", "en");
+  const langEl = document.getElementById("lang-selector");
+
+  if (langEl) {
+    langEl.value = savedLang;
+    langEl.addEventListener("change", (event) => {
+      safeSave("talivexa_lang", event.target.value);
+      if (typeof window.setLanguage === "function") {
+        window.setLanguage(event.target.value);
+      }
+    });
+  }
+
+  refreshAccountUI();
+  renderHistorySidebar();
+  renderCanvasSample();
+  initSW();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeTalivexa);
+} else {
+  initializeTalivexa();
+}
+
+// ---------------- API HELPERS ----------------
 async function apiRequest(url, options = {}) {
   const headers = {
     "Content-Type": "application/json",
@@ -69,11 +106,7 @@ async function apiRequest(url, options = {}) {
     headers.Authorization = `Bearer ${appState.token}`;
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
-
+  const response = await fetch(url, { ...options, headers });
   const contentType = response.headers.get("content-type") || "";
   let data = {};
 
@@ -85,173 +118,35 @@ async function apiRequest(url, options = {}) {
   }
 
   if (!response.ok) {
-    throw new Error(
-      data.message || `Request failed: ${response.status}`
-    );
+    throw new Error(data.message || `Request failed: ${response.status}`);
   }
-
   return data;
 }
 
-// ---------------- INITIALIZATION ----------------
-
-function initializeTalivexa() {
-  const splash = document.getElementById("splash-screen");
-
-  if (splash) {
-    setTimeout(() => {
-      splash.classList.add("hidden");
-    }, 900);
-  }
-
-  const savedLang = safeGet("talivexa_lang", "en");
-  const langEl = document.getElementById("lang-selector");
-
-  if (langEl) {
-    langEl.value = savedLang;
-
-    if (typeof window.setLanguage === "function") {
-      window.setLanguage(savedLang);
-    }
-
-    langEl.addEventListener("change", (event) => {
-      safeSave("talivexa_lang", event.target.value);
-
-      if (typeof window.setLanguage === "function") {
-        window.setLanguage(event.target.value);
-      }
-    });
-  }
-
-  refreshAccountUI();
-  renderHistorySidebar();
-
-  try {
-    renderCanvasSample();
-  } catch (error) {
-    console.error("Studio initialization error:", error);
-  }
-
-  initSW();
-  checkBackendHealth();
-}
-
-// ---------------- BACKEND HEALTH ----------------
-
-async function checkBackendHealth() {
-  try {
-    const response = await fetch("/api/health", {
-      method: "GET",
-      headers: {
-        Accept: "application/json"
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Health check returned ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.info("Talivexa backend status:", data);
-    return data;
-  } catch (error) {
-    console.warn(
-      "Talivexa health endpoint is unavailable. Backend setup may be required.",
-      error
-    );
-    return null;
-  }
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener(
-    "DOMContentLoaded",
-    initializeTalivexa,
-    { once: true }
-  );
-} else {
-  initializeTalivexa();
-}
-
 // ---------------- SERVICE WORKER ----------------
-
 function initSW() {
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .catch(error => {
-        console.warn("Service worker registration failed:", error);
-      });
-  }
-}
-
-// ---------------- PWA INSTALL ----------------
-
-window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  appState.installPromptEvent = event;
-
-  const button = document.getElementById("pwa-install-btn");
-
-  if (button) {
-    button.classList.add("show");
-  }
-});
-
-async function triggerPWAInstall() {
-  if (appState.installPromptEvent) {
-    appState.installPromptEvent.prompt();
-
-    try {
-      await appState.installPromptEvent.userChoice;
-    } catch (error) {
-      console.warn("PWA install prompt error:", error);
-    }
-
-    appState.installPromptEvent = null;
-
-    const button = document.getElementById("pwa-install-btn");
-
-    if (button) {
-      button.classList.remove("show");
-    }
-  } else {
-    alert(
-      "Open Chrome menu and select Install app or Add to Home screen."
-    );
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
   }
 }
 
 // ---------------- NAVIGATION ----------------
-
 function toggleDrawer(force) {
   const sidebar = document.getElementById("sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
-
   if (!sidebar || !backdrop) return;
 
-  const open = typeof force === "boolean"
-    ? force
-    : !sidebar.classList.contains("open");
-
+  const open = typeof force === "boolean" ? force : !sidebar.classList.contains("open");
   sidebar.classList.toggle("open", open);
   backdrop.classList.toggle("active", open);
 }
 
 function openSection(sectionId) {
-  document.querySelectorAll(".view-panel").forEach(panel => {
-    panel.classList.remove("active");
-  });
-
-  document.querySelectorAll(".nav-btn").forEach(button => {
-    button.classList.remove("active");
-  });
+  document.querySelectorAll(".view-panel").forEach(panel => panel.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(button => button.classList.remove("active"));
 
   const panel = document.getElementById("panel-" + sectionId);
-
-  const button = document.querySelector(
-    `.nav-btn[data-sec="${sectionId}"]`
-  );
+  const button = document.querySelector(`.nav-btn[data-sec="${sectionId}"]`);
 
   if (panel) panel.classList.add("active");
   if (button) button.classList.add("active");
@@ -262,15 +157,11 @@ function openSection(sectionId) {
 }
 
 // ---------------- ACCOUNT ----------------
-
 function refreshAccountUI() {
   if (!appState.user) return;
 
   document.querySelectorAll(".js-credits").forEach(element => {
-    element.textContent =
-      appState.user.plan === "enterprise"
-        ? "∞"
-        : Number(appState.user.credits || 0);
+    element.textContent = appState.user.plan === "enterprise" ? "∞" : Number(appState.user.credits || 0);
   });
 
   document.querySelectorAll(".js-username").forEach(element => {
@@ -278,20 +169,15 @@ function refreshAccountUI() {
   });
 
   document.querySelectorAll(".js-plan").forEach(element => {
-    element.textContent =
-      (appState.user.plan || "free").toUpperCase() + " PLAN";
+    element.textContent = (appState.user.plan || "free").toUpperCase() + " PLAN";
   });
 }
 
 function spendLocalCredits(amount) {
   amount = Math.max(0, Number(amount) || 0);
-
-  if (appState.user.plan === "enterprise") {
-    return true;
-  }
+  if (appState.user.plan === "enterprise") return true;
 
   const credits = Number(appState.user.credits || 0);
-
   if (credits < amount) {
     alert("Not enough credits. Please visit Subscription Plans.");
     openSection("plans");
@@ -299,174 +185,73 @@ function spendLocalCredits(amount) {
   }
 
   appState.user.credits = credits - amount;
-
   safeSave("talivexa_user", appState.user);
   refreshAccountUI();
-
   return true;
 }
 
 // ---------------- AUTHENTICATION ----------------
-
 function openAuth(mode = "login") {
-  const modeElement = document.getElementById("auth-mode");
-  const titleElement = document.getElementById("auth-title");
+  // اگر HTML میں auth modal موجود نہیں ہے تو ایرر نہیں دے گا
   const modal = document.getElementById("auth-modal");
-
-  if (!modeElement || !titleElement || !modal) return;
-
-  modeElement.value = mode;
-
-  titleElement.textContent =
-    mode === "signup"
-      ? "Create Talivexa AI Account"
-      : "Sign In to Talivexa AI";
-
-  modal.classList.add("open");
-}
-
-function closeAuth() {
-  const modal = document.getElementById("auth-modal");
-
-  if (modal) {
-    modal.classList.remove("open");
-  }
-}
-
-async function handleAuthSubmit(event) {
-  if (event) event.preventDefault();
-
-  const mode =
-    document.getElementById("auth-mode")?.value || "login";
-
-  const name =
-    document.getElementById("auth-name")?.value.trim() ||
-    "Mr. Irfan";
-
-  const email =
-    document.getElementById("auth-email")?.value.trim();
-
-  const password =
-    document.getElementById("auth-password")?.value;
-
-  if (!email || !password) {
-    alert("Please enter your email and password.");
+  if (!modal) {
+    alert("Authentication system requires backend setup. Coming soon!");
     return;
   }
-
-  if (!["login", "signup"].includes(mode)) {
-    alert("Invalid authentication mode.");
-    return;
-  }
-
-  try {
-    const data = await apiRequest(`/api/auth/${mode}`, {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        email,
-        password
-      })
-    });
-
-    if (data.token) {
-      appState.token = data.token;
-      safeSave("talivexa_token", data.token);
-    }
-
-    if (data.user) {
-      appState.user = data.user;
-      safeSave("talivexa_user", data.user);
-    }
-
-    refreshAccountUI();
-    closeAuth();
-
-    alert("Successfully authenticated with Talivexa AI.");
-  } catch (error) {
-    console.error("Authentication error:", error);
-
-    alert(
-      "Authentication failed. Please check that the backend API is configured."
-    );
-  }
+  // باقی لاجک
 }
 
 // ---------------- CHAT & WEB SEARCH ----------------
-
 function toggleSearchMode() {
   appState.webSearchMode = !appState.webSearchMode;
-
   const chip = document.getElementById("search-mode-chip");
-
-  if (chip) {
-    chip.classList.toggle(
-      "active-search",
-      appState.webSearchMode
-    );
-  }
+  if (chip) chip.classList.toggle("active-search", appState.webSearchMode);
 }
 
 function startNewConversation() {
   appState.chatId = null;
-
   const stream = document.getElementById("chat-stream");
   const template = document.getElementById("chat-empty-tpl");
 
   if (stream && template) {
     stream.innerHTML = template.innerHTML;
   }
-
   openSection("chat");
 }
 
 function sendPresetPrompt(text) {
   const input = document.getElementById("chat-prompt-input");
-
   if (!input) return;
-
   input.value = text;
   submitChatPrompt();
 }
 
 async function submitChatPrompt() {
   const input = document.getElementById("chat-prompt-input");
-
   if (!input) return;
 
   const prompt = input.value.trim();
-
   if (!prompt) return;
 
   const cost = appState.webSearchMode ? 2 : 1;
-
   if (!spendLocalCredits(cost)) return;
 
   const stream = document.getElementById("chat-stream");
-
   if (!stream) return;
 
   input.value = "";
-
   const empty = stream.querySelector(".chat-hero-empty");
-
   if (empty) empty.remove();
 
   if (!appState.chatId) {
     appState.chatId = "session_" + Date.now();
-
-    appState.chats.unshift({
-      id: appState.chatId,
-      title: prompt.slice(0, 36),
-      items: []
-    });
+    appState.chats.unshift({ id: appState.chatId, title: prompt.slice(0, 36), items: [] });
   }
 
   addBubble("user", prompt);
   saveChatItem("user", prompt);
 
   const loadId = "loading_" + Date.now();
-
   addBubble("ai", "Processing with Talivexa AI...", loadId);
 
   let reply = "";
@@ -477,184 +262,99 @@ async function submitChatPrompt() {
       body: JSON.stringify({
         prompt,
         webSearch: appState.webSearchMode,
-        model:
-          document.getElementById("model-selector")?.value ||
-          "talivexa-gold-pro",
+        model: document.getElementById("model-selector")?.value || "talivexa-gold-pro",
         lang: document.documentElement.lang || "en"
       })
     });
 
-    reply =
-      data.reply ||
-      "Talivexa AI received your message, but no reply was returned.";
-
+    reply = data.reply || "Talivexa AI received your message, but no reply was returned.";
     if (typeof data.creditsRemaining === "number") {
       appState.user.credits = data.creditsRemaining;
-
       safeSave("talivexa_user", appState.user);
       refreshAccountUI();
     }
   } catch (error) {
-    console.error("AI Chat Error:", error);
-
-    reply =
-      "Talivexa AI could not connect to its AI backend. " +
-      "Please check the backend API configuration and try again.";
+    reply = "Talivexa AI could not connect to its AI backend. Please check the backend API configuration and try again.";
   }
 
   const loadingElement = document.getElementById(loadId);
-
-  if (loadingElement) {
-    loadingElement.remove();
-  }
+  if (loadingElement) loadingElement.remove();
 
   addBubble("ai", reply);
   saveChatItem("ai", reply);
-
   renderHistorySidebar();
-}
-
-function buildFallbackResponse(prompt, isSearch) {
-  if (isSearch) {
-    return (
-      `[Talivexa Web Search Mode]\n` +
-      `Query: "${prompt}"\n` +
-      `Real-time search requires a configured backend search provider.\n` +
-      `Created by Mr. Irfan.`
-    );
-  }
-
-  return (
-    `Talivexa AI — Created by Mr. Irfan\n` +
-    `Your message: "${prompt}"\n` +
-    `A configured AI backend is required for genuine AI responses.`
-  );
 }
 
 function addBubble(role, text, id = null) {
   const stream = document.getElementById("chat-stream");
-
   if (!stream) return;
 
   const row = document.createElement("div");
-
   row.className = `bubble-row ${role}`;
-
   if (id) row.id = id;
 
   const avatar = document.createElement("div");
-
   avatar.className = "avatar-badge";
-
-  avatar.textContent =
-    role === "ai"
-      ? "T"
-      : (appState.user.name || "U")[0].toUpperCase();
+  avatar.textContent = role === "ai" ? "T" : (appState.user.name || "U")[0].toUpperCase();
 
   const bubble = document.createElement("div");
-
   bubble.className = "bubble-text";
   bubble.textContent = String(text);
 
   row.appendChild(avatar);
   row.appendChild(bubble);
-
   stream.appendChild(row);
   stream.scrollTop = stream.scrollHeight;
 }
 
 function saveChatItem(role, text) {
-  const chat = appState.chats.find(
-    item => item.id === appState.chatId
-  );
-
+  const chat = appState.chats.find(item => item.id === appState.chatId);
   if (!chat) return;
-
-  if (!Array.isArray(chat.items)) {
-    chat.items = [];
-  }
-
-  chat.items.push({
-    role,
-    text
-  });
-
+  if (!Array.isArray(chat.items)) chat.items = [];
+  chat.items.push({ role, text });
   appState.chats = appState.chats.slice(0, 25);
-
   safeSave("talivexa_chats", appState.chats);
 }
 
 function renderHistorySidebar() {
   const box = document.getElementById("history-list");
-
   if (!box) return;
-
   box.innerHTML = "";
 
   appState.chats.forEach(chat => {
     const element = document.createElement("div");
-
     element.className = "history-entry";
     element.textContent = "▸ " + chat.title;
-
     element.addEventListener("click", () => {
       appState.chatId = chat.id;
-
       const stream = document.getElementById("chat-stream");
-
       if (!stream) return;
-
       stream.innerHTML = "";
-
-      (chat.items || []).forEach(item => {
-        addBubble(item.role, item.text);
-      });
-
+      (chat.items || []).forEach(item => addBubble(item.role, item.text));
       openSection("chat");
     });
-
     box.appendChild(element);
   });
 }
 
 // ---------------- VOICE ASSISTANT ----------------
-
 let voiceRec = null;
 
 function startVoiceCapture(toChat = false) {
-  const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     alert("Voice recognition is not supported in this browser.");
     return;
   }
 
   voiceRec = new SpeechRecognition();
-
-  const localeMap = {
-    en: "en-US",
-    ur: "ur-PK",
-    ar: "ar-SA",
-    hi: "hi-IN",
-    zh: "zh-CN",
-    fr: "fr-FR",
-    es: "es-ES",
-    de: "de-DE",
-    ja: "ja-JP",
-    ko: "ko-KR"
-  };
-
-  voiceRec.lang =
-    localeMap[document.documentElement.lang] || "en-US";
+  const localeMap = { en: "en-US", ur: "ur-PK", ar: "ar-SA", hi: "hi-IN", zh: "zh-CN", fr: "fr-FR", es: "es-ES", de: "de-DE", ja: "ja-JP", ko: "ko-KR" };
+  voiceRec.lang = localeMap[document.documentElement.lang] || "en-US";
 
   voiceRec.onresult = (event) => {
     const spoken = event.results[0][0].transcript;
-
     if (toChat) {
       const input = document.getElementById("chat-prompt-input");
-
       if (input) {
         input.value = spoken;
         submitChatPrompt();
@@ -662,112 +362,52 @@ function startVoiceCapture(toChat = false) {
     } else {
       const heard = document.getElementById("voice-heard");
       const answer = document.getElementById("voice-answer");
-
-      if (heard) {
-        heard.textContent = "Heard: " + spoken;
-      }
-
-      const output =
-        "You said: " + spoken +
-        ". Connect the AI backend to receive an AI-generated answer.";
-
-      if (answer) {
-        answer.textContent = output;
-      }
-
+      if (heard) heard.textContent = "Heard: " + spoken;
+      const output = "You said: " + spoken + ". Connect the AI backend to receive an AI-generated answer.";
+      if (answer) answer.textContent = output;
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
-
-        window.speechSynthesis.speak(
-          new SpeechSynthesisUtterance(output)
-        );
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(output));
       }
     }
   };
 
-  voiceRec.onerror = (event) => {
-    console.error("Voice recognition error:", event.error);
-
-    alert("Voice recognition error: " + event.error);
-  };
+  voiceRec.onerror = (event) => alert("Voice recognition error: " + event.error);
 
   try {
     voiceRec.start();
-  } catch (error) {
-    console.error("Unable to start voice recognition:", error);
-  }
+  } catch (error) {}
 }
 
 // ---------------- IMAGE STUDIO ----------------
-
 function renderCanvasSample() {
-  generateStudioImage(
-    "Talivexa Golden Crown Core",
-    "gold_obsidian",
-    true
-  );
+  generateStudioImage("Talivexa Golden Crown Core", "gold_obsidian", true);
 }
 
-async function generateStudioImage(
-  overridePrompt,
-  overrideStyle,
-  skipCredit = false
-) {
-  const prompt =
-    overridePrompt ||
-    document.getElementById("img-prompt")?.value.trim() ||
-    "Golden Temple in Dark Obsidian";
-
-  const style =
-    overrideStyle ||
-    document.getElementById("img-style")?.value;
+async function generateStudioImage(overridePrompt, overrideStyle, skipCredit = false) {
+  const prompt = overridePrompt || document.getElementById("img-prompt")?.value.trim() || "Golden Temple in Dark Obsidian";
+  const style = overrideStyle || document.getElementById("img-style")?.value;
 
   if (!skipCredit && !spendLocalCredits(3)) return;
 
   const canvas = document.getElementById("studio-canvas");
-
   if (!canvas) return;
 
   const context = canvas.getContext("2d");
-
   if (!context) return;
 
   const width = canvas.width;
   const height = canvas.height;
 
   const palettes = {
-    gold_obsidian: [
-      "#070709",
-      "#3b2c06",
-      "#eab308",
-      "#fef08a"
-    ],
-    violet_royal: [
-      "#08060e",
-      "#3b0764",
-      "#a855f7",
-      "#f5d0fe"
-    ],
-    emerald_cyber: [
-      "#050b09",
-      "#064e3b",
-      "#10b981",
-      "#a7f3d0"
-    ],
-    crimson_forge: [
-      "#0c0607",
-      "#4c0519",
-      "#f43f5e",
-      "#fecdd3"
-    ]
+    gold_obsidian: ["#070709", "#3b2c06", "#eab308", "#fef08a"],
+    violet_royal: ["#08060e", "#3b0764", "#a855f7", "#f5d0fe"],
+    emerald_cyber: ["#050b09", "#064e3b", "#10b981", "#a7f3d0"],
+    crimson_forge: ["#0c0607", "#4c0519", "#f43f5e", "#fecdd3"]
   };
 
-  const palette =
-    palettes[style] || palettes.gold_obsidian;
-
-  const gradient =
-    context.createLinearGradient(0, 0, width, height);
-
+  const palette = palettes[style] || palettes.gold_obsidian;
+  const gradient = context.createLinearGradient(0, 0, width, height);
   gradient.addColorStop(0, palette[0]);
   gradient.addColorStop(0.5, palette[1]);
   gradient.addColorStop(1, palette[0]);
@@ -776,10 +416,8 @@ async function generateStudioImage(
   context.fillRect(0, 0, width, height);
 
   let seed = 7;
-
   for (let i = 0; i < prompt.length; i++) {
-    seed =
-      (seed * 37 + prompt.charCodeAt(i)) % 999983;
+    seed = (seed * 37 + prompt.charCodeAt(i)) % 999983;
   }
 
   const nextRandom = () => {
@@ -791,22 +429,10 @@ async function generateStudioImage(
     const x = nextRandom() * width;
     const y = nextRandom() * height;
     const radius = 24 + nextRandom() * 120;
-
-    const radialGradient =
-      context.createRadialGradient(
-        x,
-        y,
-        2,
-        x,
-        y,
-        radius
-      );
-
+    const radialGradient = context.createRadialGradient(x, y, 2, x, y, radius);
     radialGradient.addColorStop(0, palette[2] + "99");
     radialGradient.addColorStop(1, "transparent");
-
     context.fillStyle = radialGradient;
-
     context.beginPath();
     context.arc(x, y, radius, 0, Math.PI * 2);
     context.fill();
@@ -814,104 +440,98 @@ async function generateStudioImage(
 
   context.strokeStyle = palette[3] + "55";
   context.lineWidth = 2;
-  context.strokeRect(
-    18,
-    18,
-    width - 36,
-    height - 36
-  );
+  context.strokeRect(18, 18, width - 36, height - 36);
 
   context.fillStyle = "rgba(7,7,9,0.78)";
   context.fillRect(0, height - 44, width, 44);
 
   context.fillStyle = palette[3];
   context.font = "bold 13px sans-serif";
-
-  context.fillText(
-    `TALIVEXA AI • ${prompt.slice(0, 42)}`,
-    14,
-    height - 17
-  );
+  context.fillText(`TALIVEXA AI • ${prompt.slice(0, 42)}`, 14, height - 17);
 }
 
 function downloadStudioPNG() {
   const canvas = document.getElementById("studio-canvas");
-
   if (!canvas) return;
-
   try {
     const link = document.createElement("a");
-
     link.download = `talivexa-${Date.now()}.png`;
     link.href = canvas.toDataURL("image/png");
-
     link.click();
   } catch (error) {
-    console.error("Image download error:", error);
     alert("Unable to download the image.");
   }
 }
 
 // ---------------- PDF & DOCUMENT ANALYZER ----------------
-
 function readUploadedDoc(event) {
   const file = event.target.files?.[0];
-
   if (!file) return;
 
   appState.docName = file.name;
-
   const status = document.getElementById("doc-status");
-
-  if (status) {
-    status.textContent = `Selected: ${file.name}`;
-  }
+  if (status) status.textContent = `Selected: ${file.name}`;
 
   const reader = new FileReader();
-
   reader.onload = (loadEvent) => {
     const raw = loadEvent.target.result || "";
-
-    appState.docText = String(raw)
-      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 20000);
-
+    appState.docText = String(raw).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim().slice(0, 20000);
     const preview = document.getElementById("doc-preview");
-
-    if (preview) {
-      preview.textContent =
-        appState.docText.slice(0, 600) ||
-        "PDF text extraction requires a backend PDF parser.";
-    }
+    if (preview) preview.textContent = appState.docText.slice(0, 600) || "PDF text extraction requires a backend PDF parser.";
   };
-
-  reader.onerror = () => {
-    alert("Unable to read this document.");
-  };
-
+  reader.onerror = () => alert("Unable to read this document.");
   reader.readAsText(file);
 }
 
 function queryDocument() {
-  const question =
-    document.getElementById("doc-q")?.value.trim();
-
+  const question = document.getElementById("doc-q")?.value.trim();
   if (!question || !appState.docText) {
     alert("Upload a document and type a question.");
     return;
   }
-
   if (!spendLocalCredits(1)) return;
 
-  const words = question
-    .toLowerCase()
-    .split(/\W+/)
-    .filter(word => word.length > 3);
+  const words = question.toLowerCase().split(/\W+/).filter(word => word.length > 3);
+  const matches = appState.docText.split(/[.!?]+/).filter(sentence => words.some(word => sentence.toLowerCase().includes(word)));
 
-  const matches = appState.docText
-    .split(/[.!?]+/)
-    .filter(sentence =>
-      words.some(word =>
-        sentence.
+  const answer = matches.slice(0, 3).join(". ") || "No relevant sections found.";
+  const ansEl = document.getElementById("doc-ans");
+  if (ansEl) ansEl.textContent = answer;
+}
+
+// ---------------- SMART TOOLS ----------------
+async function executeSmartTool() {
+  const kind = document.getElementById("smart-kind")?.value;
+  const topic = document.getElementById("smart-topic")?.value.trim();
+  if (!topic) { alert("Please enter a topic."); return; }
+  if (!spendLocalCredits(1)) return;
+
+  const out = document.getElementById("smart-out");
+  if (out) out.textContent = "Generating...";
+
+  try {
+    const data = await apiRequest("/api/ai/chat", {
+      method: "POST",
+      body: JSON.stringify({ prompt: `[${kind.toUpperCase()}] ${topic}`, model: "talivexa-gold-pro", lang: "en" })
+    });
+    if (out) out.textContent = data.reply || "No response.";
+  } catch (error) {
+    if (out) out.textContent = "Failed to connect to AI backend.";
+  }
+}
+
+// ---------------- EXPORT TO WINDOW (For HTML onclick) ----------------
+window.toggleDrawer = toggleDrawer;
+window.openSection = openSection;
+window.openAuth = openAuth;
+window.startNewConversation = startNewConversation;
+window.sendPresetPrompt = sendPresetPrompt;
+window.submitChatPrompt = submitChatPrompt;
+window.toggleSearchMode = toggleSearchMode;
+window.triggerPWAInstall = triggerPWAInstall;
+window.startVoiceCapture = startVoiceCapture;
+window.generateStudioImage = generateStudioImage;
+window.downloadStudioPNG = downloadStudioPNG;
+window.readUploadedDoc = readUploadedDoc;
+window.queryDocument = queryDocument;
+window.executeSmartTool = executeSmartTool;
