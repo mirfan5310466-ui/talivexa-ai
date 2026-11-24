@@ -9,7 +9,6 @@ const authRoutes = require('./routes/authRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 4000;
 
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
@@ -30,12 +29,13 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api', aiRoutes);
 
-// Serve static frontend & PWA files
-app.use(express.static(path.join(__dirname, '..', 'public')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-});
+// Vercel پر سرور کو چلانے کے لیے یہ لائن ضروری ہے
+module.exports = app;
 
-app.listen(PORT, () => {
-  console.log(`Talivexa AI server running on http://localhost:${PORT} — Created by Mr. Irfan`);
-});
+// صرف لوکل کمپیوٹر پر چلانے کے لیے یہ حصہ
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`Talivexa AI server running on http://localhost:${PORT}`);
+  });
+}
