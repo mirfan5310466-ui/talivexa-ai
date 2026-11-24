@@ -7,8 +7,8 @@
   <title>Talivexa AI — Created by Mr. Irfan</title>
 
   <link rel="manifest" href="/manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="/assets/icons/talivexa-logo.svg" />
-  <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png" />
+  <link rel="icon" type="image/svg+xml" href="/talivexa-logo.svg" />
+  <link rel="apple-touch-icon" href="/icon-192x192.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,7 +21,7 @@
   <!-- Splash Screen -->
   <div id="splash-screen">
     <div class="splash-logo-box">
-      <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI Logo" />
+      <img src="/talivexa-logo.svg" alt="Talivexa AI Logo" />
     </div>
     <div class="splash-brand">Talivexa AI</div>
     <div class="splash-by">Created by Mr. Irfan</div>
@@ -34,7 +34,7 @@
     <aside id="sidebar" class="sidebar">
       <div class="brand-bar">
         <a href="#" class="brand-identity" onclick="openSection('chat'); return false;">
-          <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI Logo" class="brand-logo-img" />
+          <img src="/talivexa-logo.svg" alt="Talivexa AI Logo" class="brand-logo-img" />
           <div>
             <div class="brand-title">Talivexa AI</div>
             <div class="brand-sub">Created by Mr. Irfan</div>
@@ -144,7 +144,7 @@
         <div class="chat-wrap">
           <div id="chat-stream" class="chat-stream">
             <div class="chat-hero-empty">
-              <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI" />
+              <img src="/talivexa-logo.svg" alt="Talivexa AI" />
               <h1 data-i18n="welcomeTitle">Talivexa AI — Intelligence Reimagined</h1>
               <p data-i18n="welcomeSub" style="color:#b5ad9c;font-size:0.9rem;margin-top:4px;">Created by Mr. Irfan • Black & Gold Multimodal AI Platform</p>
               <div class="starter-grid">
@@ -158,7 +158,7 @@
 
           <template id="chat-empty-tpl">
             <div class="chat-hero-empty">
-              <img src="/assets/icons/talivexa-logo.svg" alt="Talivexa AI" />
+              <img src="/talivexa-logo.svg" alt="Talivexa AI" />
               <h1 data-i18n="welcomeTitle">Talivexa AI — Intelligence Reimagined</h1>
               <p data-i18n="welcomeSub" style="color:#b5ad9c;font-size:0.9rem;margin-top:4px;">Created by Mr. Irfan • Black & Gold Multimodal AI Platform</p>
             </div>
@@ -369,56 +369,4 @@
           <div class="card">
             <ul style="padding-inline-start:18px;line-height:1.9;font-size:0.9rem;color:#e7e2d8;">
               <li><strong>Environment Secrets:</strong> Stored in <code>.env</code> on the backend server (<code>JWT_SECRET</code>, <code>AI_API_KEY</code>, <code>SEARCH_API_KEY</code>, <code>PAYMENT_SECRET_KEY</code>).</li>
-              <li><strong>Security Middleware:</strong> Helmet HTTP headers, CORS restriction, rate limiting, and input validation enabled in Express.</li>
-              <li><strong>Authentication:</strong> Password hashing with <code>bcryptjs</code> and stateless <code>JWT</code> bearer tokens.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- 11. FOUNDER SECTION -->
-      <section id="panel-founder" class="view-panel">
-        <div class="container-box">
-          <div class="panel-heading">
-            <h2>Founder — Mr. Irfan</h2>
-            <p>Creator and owner of Talivexa AI.</p>
-          </div>
-          <div class="card founder-card">
-            <img src="/assets/images/founder-placeholder.png" alt="Founder Portrait Slot" class="founder-photo" />
-            <div>
-              <h3 style="font-size:1.3rem;color:#facc15;">Mr. Irfan</h3>
-              <p style="color:#b5ad9c;font-size:0.9rem;margin-top:6px;max-width:560px;">
-                Founder of <strong>Talivexa AI</strong>. To display your personal portrait here, save your photo as
-                <code>public/assets/images/founder-portrait.jpg</code> and update the <code>src</code> attribute in <code>public/index.html</code>.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- Auth Modal -->
-  <div id="auth-modal" class="modal-bg">
-    <div class="modal-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h3 id="auth-title">Sign In to Talivexa AI</h3>
-        <button class="btn-outline-gold" style="padding:4px 9px;" onclick="closeAuth()">✕</button>
-      </div>
-      <form onsubmit="handleAuthSubmit(event)">
-        <input id="auth-mode" type="hidden" value="login" />
-        <label>Full Name</label>
-        <input id="auth-name" type="text" class="field" placeholder="Mr. Irfan" />
-        <label>Email</label>
-        <input id="auth-email" type="email" class="field" placeholder="irfan@talivexa.ai" required />
-        <label>Password</label>
-        <input id="auth-password" type="password" class="field" placeholder="••••••••" required />
-        <button type="submit" class="btn-gold" style="width:100%;">Continue</button>
-      </form>
-    </div>
-  </div>
-
-  <script src="/js/i18n.js"></script>
-  <script src="/js/app.js"></script>
-</body>
-</html>
+              <li><strong>S
