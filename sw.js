@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'talivexa-ai-cache-v3';
+const CACHE_NAME = 'talivexa-ai-cache-v4';
 
 const CORE_ASSETS = [
   '/',
@@ -8,7 +8,7 @@ const CORE_ASSETS = [
   '/js/i18n.js',
   '/js/app.js',
   '/manifest.json',
-  '/assets/icons/talivexa-logo.svg',
+  '/talivexa-logo.svg',
   '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-512x512.png',
   '/assets/images/founder-placeholder.png'
@@ -36,6 +36,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
   if (new URL(event.request.url).pathname.startsWith('/api/')) return;
 
   event.respondWith(
