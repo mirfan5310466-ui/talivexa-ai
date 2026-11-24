@@ -18,14 +18,7 @@
 </head>
 <body>
 
-  <!-- Splash Screen -->
-  <div id="splash-screen">
-    <div class="splash-logo-box">
-      <img src="/talivexa-logo.svg" alt="Talivexa AI Logo" />
-    </div>
-    <div class="splash-brand">Talivexa AI</div>
-    <div class="splash-by">Created by Mr. Irfan</div>
-  </div>
+  <!-- Splash Screen حذف کر دیا گیا ہے تاکہ لوڈنگ کا مسئلہ ختم ہو -->
 
   <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleDrawer(false)"></div>
 
@@ -369,4 +362,6 @@
           <div class="card">
             <ul style="padding-inline-start:18px;line-height:1.9;font-size:0.9rem;color:#e7e2d8;">
               <li><strong>Environment Secrets:</strong> Stored in <code>.env</code> on the backend server (<code>JWT_SECRET</code>, <code>AI_API_KEY</code>, <code>SEARCH_API_KEY</code>, <code>PAYMENT_SECRET_KEY</code>).</li>
-              <li><strong>S
+              <li><strong>Server-side API key security:</strong> Keys are never exposed to browser clients.</li>
+              <li><strong>Authentication:</strong> JWT tokens protect user accounts and session data.</li>
+       
