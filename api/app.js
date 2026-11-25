@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const serverless = require('serverless-http'); // یہ لائن شامل کی گئی ہے
 
 // Vercel پر راستوں کو ٹھیک کرنے کے لیے
 const authRoutes = require('../routes/authRoutes');
@@ -24,7 +25,7 @@ app.use(
 // CORS Configuration
 app.use(
   cors({
-    origin: true, // فی الحال تمام origins کو allow کر رہے ہیں تاکہ ٹیسٹنگ میں رکاوٹ نہ ہو
+    origin: true, // تمام origins کو allow کر رہے ہیں تاکہ ٹیسٹنگ میں رکاوٹ نہ ہو
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -63,3 +64,4 @@ app.use('/api/ai', aiRoutes);
 
 // Vercel Serverless Function Export
 module.exports = app;
+module.exports.handler = serverless(app); // یہ لائن شامل کی گئی ہے
