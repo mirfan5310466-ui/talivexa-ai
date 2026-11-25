@@ -20,13 +20,32 @@ app.use(
   })
 );
 
-// CORS
+// --- CORS FIX START ---
+// یہاں آپ کو اپنی Vercel والی ویب سائٹ کا لنک ڈالنا ہے (بغیر آخری سلیش / کے)
+const allowedOrigins = [
+  'https://mirfan5310466-4327.vercel.app', // آپ کی ویب سائٹ کا لنک سکرین شاٹ کے مطابق
+  'http://localhost:3000',                 // لوکل ٹیسٹنگ کے لیے
+  'http://localhost:4000'
+];
+
 app.use(
   cors({
-    origin: true,
-    credentials: true
+    origin: function (origin, callback) {
+      // اگر کوئی origin نہیں ہے (جیسے موبائل ایپ یا پوسٹ مین) تو اسے اجازت دیں
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
+// --- CORS FIX END ---
 
 // JSON body parser
 app.use(express.json({ limit: '2mb' }));
@@ -53,8 +72,8 @@ app.get('/api/health', (req, res) => {
 // Authentication routes
 app.use('/api/auth', authRoutes);
 
-// AI routes: support both frontend URL conventions.
-// POST /api/chat and POST /api/ai/chat both reach routes/aiRoutes.js
+// AI routes
+// فرنٹ اینڈ سے کال کرتے وقت دھیان رکھیں کہ آپ /api/chat یا /api/ai/chat استعمال کر رہے ہوں
 app.use('/api', aiRoutes);
 app.use('/api/ai', aiRoutes);
 
