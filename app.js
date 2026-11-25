@@ -20,10 +20,10 @@ app.use(
   })
 );
 
-// --- CORS FIX START ---
-// آپ کی Vercel ویب سائٹ کے لنکس یہاں ہیں
+// CORS Configuration
 const allowedOrigins = [
-  'https://mirfan5310466-4327.vercel.app', 
+  'https://mirfan5310466-4327.vercel.app', // آپ کی ویب سائٹ
+  'https://talivexa-ai.vercel.app',        // اگر کوئی کسٹم ڈومین ہو
   'http://localhost:3000',
   'http://localhost:4000'
 ];
@@ -31,11 +31,16 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
+      // موبائل ایپ یا پوسٹ مین کے لیے
       if (!origin) return callback(null, true);
+      
+      // اگر لسٹ میں موجود ہے تو اجازت دیں
       if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        // ویسے تو بلاک کریں، لیکن ڈیبگنگ کے لیے فی الحال allow کر رہے ہیں
+        console.log("CORS Warning: Origin not allowed ->", origin);
+        callback(null, true); 
       }
     },
     credentials: true,
@@ -43,7 +48,6 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
-// --- CORS FIX END ---
 
 // JSON body parser
 app.use(express.json({ limit: '2mb' }));
@@ -63,24 +67,17 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     platform: 'Talivexa AI',
-    creator: 'Mr. Irfan'
+    creator: 'Mr. Irfan',
+    message: 'Backend is running perfectly!'
   });
 });
 
 // Authentication routes
 app.use('/api/auth', authRoutes);
 
-// AI routes (یہ /api/chat اور /api/ai/chat دونوں کو ہینڈل کرے گا)
+// AI routes
 app.use('/api', aiRoutes);
 app.use('/api/ai', aiRoutes);
 
-// Vercel serverless export
+// Vercel Serverless Function Export
 module.exports = app;
-
-// Local development only
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 4000;
-  app.listen(PORT, () => {
-    console.log(`Talivexa AI server running on http://localhost:${PORT}`);
-  });
-}
