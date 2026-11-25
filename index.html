@@ -259,3 +259,123 @@
 
     const palettes = {
       gold_obsidian: ["#0
+      gold_obsidian: ["#070709", "#3b2c06", "#eab308", "#fef08a"],
+      violet_royal: ["#08060e", "#3b0764", "#a855f7", "#f5d0fe"],
+      emerald_cyber: ["#050b09", "#064e3b", "#10b981", "#a7f3d0"],
+      crimson_forge: ["#0c0607", "#4c0519", "#f43f5e", "#fecdd3"]
+    };
+    const palette = palettes[style] || palettes.gold_obsidian;
+
+    const gradient = context.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, palette[0]);
+    gradient.addColorStop(0.5, palette[1]);
+    gradient.addColorStop(1, palette[0]);
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, width, height);
+
+    let seed = 7;
+    for (let i = 0; i < prompt.length; i++) {
+      seed = (seed * 37 + prompt.charCodeAt(i)) % 999983;
+    }
+    const nextRandom = () => {
+      seed = (seed * 48271) % 2147483647;
+      return (seed / 2147483647);
+    };
+
+    for (let i = 0; i < 16; i++) {
+      const x = nextRandom() * width;
+      const y = nextRandom() * height;
+      const radius = 24 + nextRandom() * 120;
+      const radialGradient = context.createRadialGradient(x, y, 2, x, y, radius);
+      radialGradient.addColorStop(0, palette[2] + "99");
+      radialGradient.addColorStop(1, "transparent");
+      context.fillStyle = radialGradient;
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    context.strokeStyle = palette[3] + "55";
+    context.lineWidth = 2;
+    context.strokeRect(18, 18, width - 36, height - 36);
+
+    context.fillStyle = "rgba(7,7,9,0.78)";
+    context.fillRect(0, height - 44, width, 44);
+
+    context.fillStyle = palette[3];
+    context.font = "bold 13px sans-serif";
+    context.fillText(`TALIVEXA AI • ${prompt.slice(0, 42)}`, 14, height - 17);
+  }
+
+  function downloadStudioPNG() {
+    const canvas = document.getElementById("studio-canvas");
+    if (!canvas) return;
+    try {
+      const link = document.createElement("a");
+      link.download = `talivexa-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (error) {
+      alert("Unable to download the image.");
+    }
+  }
+
+  function readUploadedDoc(event) {
+    const file = event.target.files?.[0]; if (!file) return;
+    appState.docName = file.name;
+    const status = document.getElementById("doc-status"); if (status) status.textContent = `Selected: ${file.name}`;
+    const reader = new FileReader();
+    reader.onload = (loadEvent) => {
+      const raw = loadEvent.target.result || "";
+      appState.docText = String(raw).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim().slice(0, 20000);
+      const preview = document.getElementById("doc-preview"); if (preview) preview.textContent = appState.docText.slice(0, 600) || "PDF text extraction preview not available in this browser.";
+    };
+    reader.readAsText(file);
+  }
+
+  function queryDocument() {
+    const question = document.getElementById("doc-q")?.value.trim();
+    const answerBox = document.getElementById("doc-ans");
+    if (!appState.docText) { if (answerBox) answerBox.textContent = "Please upload a document first."; return; }
+    if (!question) { if (answerBox) answerBox.textContent = "Please enter a question about the document."; return; }
+    if (!spendLocalCredits(2)) return;
+    if (answerBox) answerBox.textContent = "Analyzing document...";
+    setTimeout(() => {
+      if (answerBox) answerBox.textContent = `Talivexa AI Document Analyzer\n\nDocument: ${appState.docName}\nQuestion: ${question}\n\nRelevant excerpt: ${appState.docText.slice(0, 240)}...\n\nConfigure a live AI backend to receive a complete synthesized answer.`;
+    }, 900);
+  }
+
+  function executeSmartTool() {
+    const kind = document.getElementById("smart-kind")?.value || "script";
+    const topic = document.getElementById("smart-topic")?.value.trim() || "Talivexa AI";
+    const out = document.getElementById("smart-out");
+    if (!spendLocalCredits(1)) return;
+    if (out) out.textContent = "Running smart tool...";
+    setTimeout(() => {
+      if (out) out.textContent = `Talivexa AI Smart Tool\n\nMode: ${kind}\nTopic: ${topic}\n\nThis is a demo response. Connect a live backend AI service to receive a complete generated output.`;
+    }, 800);
+  }
+
+  function saveProfileSettings() {
+    const name = document.getElementById("prof-name")?.value.trim();
+    const email = document.getElementById("prof-email")?.value.trim();
+    if (name) appState.user.name = name;
+    if (email) appState.user.email = email;
+    safeSave("talivexa_user", appState.user);
+    refreshAccountUI();
+    alert("Profile settings saved.");
+  }
+
+  function chooseSubscription(plan) {
+    appState.user.plan = plan;
+    if (plan === "free") appState.user.credits = Math.max(appState.user.credits, 100);
+    if (plan === "pro") appState.user.credits = Math.max(appState.user.credits, 2000);
+    safeSave("talivexa_user", appState.user);
+    refreshAccountUI();
+    alert(`Subscription updated to ${plan.toUpperCase()} plan.`);
+    openSection("dashboard");
+  }
+</script>
+
+</body>
+</html>
