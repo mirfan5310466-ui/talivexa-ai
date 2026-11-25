@@ -5,7 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-// یہاں راستے (paths) ٹھیک کیے گئے ہیں
+// Vercel پر راستوں کو ٹھیک کرنے کے لیے
 const authRoutes = require('../routes/authRoutes');
 const aiRoutes = require('../routes/aiRoutes');
 
@@ -22,20 +22,9 @@ app.use(
 );
 
 // CORS Configuration
-const allowedOrigins = [
-  'https://mirfan5310466-4327.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:4000'
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      
-      // ڈیبگنگ کے لیے تمام origins کو allow کر رہے ہیں
-      callback(null, true); 
-    },
+    origin: true, // فی الحال تمام origins کو allow کر رہے ہیں تاکہ ٹیسٹنگ میں رکاوٹ نہ ہو
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
