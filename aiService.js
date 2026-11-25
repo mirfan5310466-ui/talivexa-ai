@@ -1,7 +1,9 @@
 async function generateAIResponse({ prompt, webSearch, lang }) {
-  // نام بدل کر AI_API_KEY کر دیا گیا ہے تاکہ ویسل والی چابی مل سکے
+  // Vercel میں آپ کی API Key کا نام AI_API_KEY ہے
   const apiKey = process.env.AI_API_KEY || process.env.AI_PROVIDER_API_KEY; 
-  const model = process.env.AI_MODEL_NAME || 'gemini-2.5-flash';
+  
+  // ماڈل کا نام تبدیل کر دیا گیا ہے (gemini-2.5-flash اب دستیاب نہیں)
+  const model = process.env.AI_MODEL_NAME || 'gemini-3.8-flash';
 
   if (!apiKey) {
     return {
