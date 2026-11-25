@@ -28,14 +28,6 @@
     </div>
     
     <button class="btn-new-session" onclick="startNewConversation()"><span>+ New Chat</span></button>
-
-    <!-- زبان تبدیل کرنے کا بٹن -->
-    <select id="lang-selector" class="field" style="margin: 0 16px 10px; width: calc(100% - 32px); background: #0b1220; color: #fff; border: 1px solid #2d3748; padding: 8px; border-radius: 8px;" onchange="changeLanguage(this.value)">
-      <option value="en">English</option>
-      <option value="ur">اردو</option>
-      <option value="ar">العربية</option>
-      <option value="hi">हिन्दी</option>
-    </select>
     
     <div class="sidebar-nav">
       <div class="nav-group-title">AI Modules</div>
@@ -70,6 +62,7 @@
   </aside>
 
   <div class="main-area">
+    <!-- نیا ٹاپ بار -->
     <header class="topbar new-topbar">
       <div class="topbar-group">
         <button class="burger-btn" onclick="toggleDrawer(true)">☰</button>
@@ -81,13 +74,12 @@
           <span style="cursor:pointer;">✉️ Contact</span>
         </div>
       </div>
-      <div class="topbar-group" style="display: flex; gap: 10px; align-items: center;">
-        <button class="btn-outline-gold" onclick="openAuth('login')" style="padding: 8px 16px; font-size: 0.85rem;">Login</button>
-        <button class="btn-gold" onclick="openAuth('signup')" style="padding: 8px 16px; font-size: 0.85rem;">Sign Up</button>
+      <div class="topbar-group">
         <button class="btn-try-ai">Try Mr AI ✦</button>
       </div>
     </header>
 
+    <!-- چیٹ کا مرکزی حصہ -->
     <main id="panel-chat" class="view-panel active">
       <div class="chat-wrap">
         <div id="chat-stream" class="chat-stream">
@@ -100,7 +92,6 @@
         
         <div class="composer-shell">
           <div style="display:flex; align-items:center; gap:10px;">
-            <button class="round-act" onclick="openSection('image')" title="AI Image Studio">+</button>
             <input id="chat-prompt-input" class="composer-input" placeholder="Message Talivexa AI..." onkeydown="if(event.key==='Enter'){submitChatPrompt();}" />
             <button class="round-act" onclick="startVoiceCapture(true)">🎙️</button>
             <button class="round-act send-blue" onclick="submitChatPrompt()">➤</button>
@@ -113,6 +104,7 @@
       </div>
     </main>
 
+    <!-- باقی سیکشنز -->
     <section id="panel-search" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Web Search</h2></div><div class="card"><label>Search Query</label><input id="search-box-input" type="text" class="field" /><button class="btn-gold" onclick="sendPresetPrompt(document.getElementById('search-box-input').value || 'Latest AI news'); toggleSearchMode();">Run Grounded Search</button></div></div></section>
     <section id="panel-voice" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Voice Assistant</h2></div><div class="card"><button class="btn-gold" onclick="startVoiceCapture(false)">Start Microphone Capture</button><p id="voice-heard" style="margin-top:14px;color:#fdba74;font-weight:700;"></p><p id="voice-answer" style="margin-top:8px;white-space:pre-wrap;"></p></div></div></section>
     <section id="panel-image" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Image Generation Studio</h2></div><div class="grid-2"><div class="card"><label>Prompt</label><textarea id="img-prompt" class="field" rows="3"></textarea><label>Color Palette</label><select id="img-style" class="field"><option value="gold_obsidian">Black & Gold</option></select><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-gold" onclick="generateStudioImage()">Generate</button><button class="btn-outline-gold" onclick="downloadStudioPNG()">Download PNG</button></div></div><div class="card" style="display:flex;align-items:center;justify-content:center;"><canvas id="studio-canvas" width="460" height="460" style="max-width:100%;height:auto;border-radius:14px;"></canvas></div></div></div></section>
@@ -136,18 +128,7 @@
     chatId: null, chats: safeJSON("talivexa_chats", []), webSearchMode: false, docText: "", docName: "", installPromptEvent: null
   };
 
-  function changeLanguage(langCode) {
-    document.documentElement.lang = langCode;
-    document.documentElement.dir = (langCode === 'ur' || langCode === 'ar') ? 'rtl' : 'ltr';
-    safeSave("talivexa_lang", langCode);
-    console.log("Language changed to: " + langCode);
-  }
-
   function initializeTalivexa() {
-    const savedLang = safeGet("talivexa_lang", "en");
-    const langEl = document.getElementById("lang-selector");
-    if (langEl) langEl.value = savedLang;
-    changeLanguage(savedLang);
     refreshAccountUI(); renderHistorySidebar(); renderCanvasSample(); initSW();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeTalivexa);
@@ -221,7 +202,8 @@
     const loadId = "loading_" + Date.now(); addBubble("ai", "Processing...", loadId);
     let reply = "";
     try {
-      const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, lang: document.documentElement.lang || "en" }) });
+      // یہاں API کا راستہ /api/chat ہے
+      const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, model: document.getElementById("model-selector")?.value || "talivexa-gold-pro", lang: document.documentElement.lang || "en" }) });
       reply = data.reply || "No reply returned.";
       if (typeof data.creditsRemaining === "number") { appState.user.credits = data.creditsRemaining; safeSave("talivexa_user", appState.user); refreshAccountUI(); }
     } catch (error) { reply = "Could not connect to AI backend. Please check the backend API configuration and try again."; }
@@ -260,15 +242,7 @@
     voiceRec.onresult = (event) => {
       const spoken = event.results[0][0].transcript;
       if (toChat) { const input = document.getElementById("chat-prompt-input"); if (input) { input.value = spoken; submitChatPrompt(); } }
-      else { const heard = document.getElementById("voice-heard"); const answer = documeconst answer = document.getElementById("voice-answer"); 
-        if (heard) heard.textContent = "Heard: " + spoken; 
-        const output = "You said: " + spoken; 
-        if (answer) answer.textContent = output; 
-        if ("speechSynthesis" in window) { 
-          window.speechSynthesis.cancel(); 
-          window.speechSynthesis.speak(new SpeechSynthesisUtterance(output)); 
-        } 
-      }
+      else { const heard = document.getElementById("voice-heard"); const answer = document.getElementById("voice-answer"); if (heard) heard.textContent = "Heard: " + spoken; const output = "You said: " + spoken; if (answer) answer.textContent = output; if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(output)); } }
     };
     voiceRec.onerror = (event) => alert("Voice recognition error: " + event.error);
     try { voiceRec.start(); } catch (error) {}
@@ -284,102 +258,83 @@
     const context = canvas.getContext("2d"); if (!context) return;
     const width = canvas.width; const height = canvas.height;
 
-    const palettes = {
-      gold_obsidian: ["#070709", "#3b2c06", "#eab308", "#fef08a"],
-      violet_royal: ["#08060e", "#3b0764", "#a855f7", "#f5d0fe"],
-      emerald_cyber: ["#050b09", "#064e3b", "#10b981", "#a7f3d0"],
-      crimson_forge: ["#0c0607", "#4c0519", "#f43f5e", "#fecdd3"]
-    };
-    const palette = palettes[style] || palettes.gold_obsidian;
-
+    context.clearRect(0, 0, width, height);
     const gradient = context.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, palette[0]);
-    gradient.addColorStop(0.5, palette[1]);
-    gradient.addColorStop(1, palette[0]);
+    gradient.addColorStop(0, "#070b14");
+    gradient.addColorStop(1, "#1b2435");
     context.fillStyle = gradient;
     context.fillRect(0, 0, width, height);
-
-    let seed = 7;
-    for (let i = 0; i < prompt.length; i++) {
-      seed = (seed * 37 + prompt.charCodeAt(i)) % 999983;
-    }
-    const nextRandom = () => {
-      seed = (seed * 48271) % 2147483647;
-      return (seed / 2147483647);
-    };
-
-    for (let i = 0; i < 16; i++) {
-      const x = nextRandom() * width;
-      const y = nextRandom() * height;
-      const radius = 24 + nextRandom() * 120;
-      const radialGradient = context.createRadialGradient(x, y, 2, x, y, radius);
-      radialGradient.addColorStop(0, palette[2] + "99");
-      radialGradient.addColorStop(1, "transparent");
-      context.fillStyle = radialGradient;
-      context.beginPath();
-      context.arc(x, y, radius, 0, Math.PI * 2);
-      context.fill();
-    }
-
-    context.strokeStyle = palette[3] + "55";
-    context.lineWidth = 2;
-    context.strokeRect(18, 18, width - 36, height - 36);
-
-    context.fillStyle = "rgba(7,7,9,0.78)";
-    context.fillRect(0, height - 44, width, 44);
-
-    context.fillStyle = palette[3];
-    context.font = "bold 13px sans-serif";
-    context.fillText(`TALIVEXA AI • ${prompt.slice(0, 42)}`, 14, height - 17);
+    context.strokeStyle = "#d6ad55";
+    context.lineWidth = 5;
+    context.strokeRect(18,  18, width - 36, height - 36);
+    context.textAlign = "center";
+    context.fillStyle = "#f5d98b";
+    context.font = "bold 30px Arial";
+    context.fillText("TALIVEXA AI", width / 2, height / 2 - 18);
+    context.fillStyle = "#ffffff";
+    context.font = "16px Arial";
+    context.fillText(String(prompt).slice(0, 42), width / 2, height / 2 + 22);
+    return true;
   }
 
   function downloadStudioPNG() {
     const canvas = document.getElementById("studio-canvas");
     if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "talivexa-ai-image.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+
+  async function readUploadedDoc(event) {
+    const file = event.target.files && event.target.files[0];
+    const status = document.getElementById("doc-status");
+    const preview = document.getElementById("doc-preview");
+    if (!file) return;
+    if (status) status.textContent = "Reading: " + file.name;
     try {
-      const link = document.createElement("a");
-      link.download = `talivexa-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+      const text = await file.text();
+      appState.docText = text;
+      appState.docName = file.name;
+      if (preview) preview.textContent = text.slice(0, 12000);
+      if (status) status.textContent = "Loaded: " + file.name;
     } catch (error) {
-      alert("Unable to download the image.");
+      if (status) status.textContent = "Could not read this file.";
     }
   }
 
-  function readUploadedDoc(event) {
-    const file = event.target.files?.[0]; if (!file) return;
-    appState.docName = file.name;
-    const status = document.getElementById("doc-status"); if (status) status.textContent = `Selected: ${file.name}`;
-    const reader = new FileReader();
-    reader.onload = (loadEvent) => {
-      const raw = loadEvent.target.result || "";
-      appState.docText = String(raw).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ").replace(/\s+/g, " ").trim().slice(0, 20000);
-      const preview = document.getElementById("doc-preview"); if (preview) preview.textContent = appState.docText.slice(0, 600) || "PDF text extraction preview not available in this browser.";
-    };
-    reader.readAsText(file);
-  }
-
-  function queryDocument() {
+  async function queryDocument() {
     const question = document.getElementById("doc-q")?.value.trim();
-    const answerBox = document.getElementById("doc-ans");
-    if (!appState.docText) { if (answerBox) answerBox.textContent = "Please upload a document first."; return; }
-    if (!question) { if (answerBox) answerBox.textContent = "Please enter a question about the document."; return; }
-    if (!spendLocalCredits(2)) return;
-    if (answerBox) answerBox.textContent = "Analyzing document...";
-    setTimeout(() => {
-      if (answerBox) answerBox.textContent = `Talivexa AI Document Analyzer\n\nDocument: ${appState.docName}\nQuestion: ${question}\n\nRelevant excerpt: ${appState.docText.slice(0, 240)}...\n\nConfigure a live AI backend to receive a complete synthesized answer.`;
-    }, 900);
+    const output = document.getElementById("doc-ans");
+    if (!question) { if (output) output.textContent = "Enter a question first."; return; }
+    if (!appState.docText) { if (output) output.textContent = "Please select a document first."; return; }
+    if (output) output.textContent = "Analyzing document...";
+    try {
+      const data = await apiRequest("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ prompt: "Answer using this document only.\n\nDOCUMENT:\n" + appState.docText.slice(0, 12000) + "\n\nQUESTION:\n" + question, lang: document.documentElement.lang || "en" })
+      });
+      if (output) output.textContent = data.reply || "No answer returned.";
+    } catch (error) {
+      if (output) output.textContent = "Document analysis failed: " + error.message;
+    }
   }
 
-  function executeSmartTool() {
-    const kind = document.getElementById("smart-kind")?.value || "script";
-    const topic = document.getElementById("smart-topic")?.value.trim() || "Talivexa AI";
-    const out = document.getElementById("smart-out");
-    if (!spendLocalCredits(1)) return;
-    if (out) out.textContent = "Running smart tool...";
-    setTimeout(() => {
-      if (out) out.textContent = `Talivexa AI Smart Tool\n\nMode: ${kind}\nTopic: ${topic}\n\nThis is a demo response. Connect a live backend AI service to receive a complete generated output.`;
-    }, 800);
+  async function executeSmartTool() {
+    const kind = document.getElementById("smart-kind")?.value || "summary";
+    const topic = document.getElementById("smart-topic")?.value.trim();
+    const output = document.getElementById("smart-out");
+    if (!topic) { if (output) output.textContent = "Enter a topic first."; return; }
+    if (output) output.textContent = "Working...";
+    try {
+      const data = await apiRequest("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ prompt: "Task type: " + kind + "\nTopic: " + topic, lang: document.documentElement.lang || "en" })
+      });
+      if (output) output.textContent = data.reply || "No result returned.";
+    } catch (error) {
+      if (output) output.textContent = "Request failed: " + error.message;
+    }
   }
 
   function saveProfileSettings() {
@@ -389,19 +344,24 @@
     if (email) appState.user.email = email;
     safeSave("talivexa_user", appState.user);
     refreshAccountUI();
-    alert("Profile settings saved.");
+    alert("Profile settings saved on this device.");
   }
 
   function chooseSubscription(plan) {
     appState.user.plan = plan;
-    if (plan === "free") appState.user.credits = Math.max(appState.user.credits, 100);
-    if (plan === "pro") appState.user.credits = Math.max(appState.user.credits, 2000);
     safeSave("talivexa_user", appState.user);
     refreshAccountUI();
-    alert(`Subscription updated to ${plan.toUpperCase()} plan.`);
-    openSection("dashboard");
+    alert("Plan selection is a local demo only. Payment processing is not connected.");
   }
-</script>
 
+  // Make inline HTML handlers available to the browser.
+  Object.assign(window, {
+    changeLanguage, initializeTalivexa, toggleDrawer, openSection,
+    openAuth, toggleSearchMode, startNewConversation, sendPresetPrompt,
+    submitChatPrompt, startVoiceCapture, generateStudioImage,
+    downloadStudioPNG, readUploadedDoc, queryDocument,
+    executeSmartTool, saveProfileSettings, chooseSubscription
+  });
+</script>
 </body>
 </html>
