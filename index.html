@@ -62,7 +62,7 @@
   </aside>
 
   <div class="main-area">
-    <!-- نیا ٹاپ بار (آپ کی تصویر کے مطابق) -->
+    <!-- نیا ٹاپ بار -->
     <header class="topbar new-topbar">
       <div class="topbar-group">
         <button class="burger-btn" onclick="toggleDrawer(true)">☰</button>
@@ -104,7 +104,7 @@
       </div>
     </main>
 
-    <!-- باقی سیکشنز (جیسے Search, Voice, Dashboard وغیرہ) -->
+    <!-- باقی سیکشنز -->
     <section id="panel-search" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Web Search</h2></div><div class="card"><label>Search Query</label><input id="search-box-input" type="text" class="field" /><button class="btn-gold" onclick="sendPresetPrompt(document.getElementById('search-box-input').value || 'Latest AI news'); toggleSearchMode();">Run Grounded Search</button></div></div></section>
     <section id="panel-voice" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Voice Assistant</h2></div><div class="card"><button class="btn-gold" onclick="startVoiceCapture(false)">Start Microphone Capture</button><p id="voice-heard" style="margin-top:14px;color:#fdba74;font-weight:700;"></p><p id="voice-answer" style="margin-top:8px;white-space:pre-wrap;"></p></div></div></section>
     <section id="panel-image" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Image Generation Studio</h2></div><div class="grid-2"><div class="card"><label>Prompt</label><textarea id="img-prompt" class="field" rows="3"></textarea><label>Color Palette</label><select id="img-style" class="field"><option value="gold_obsidian">Black & Gold</option></select><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-gold" onclick="generateStudioImage()">Generate</button><button class="btn-outline-gold" onclick="downloadStudioPNG()">Download PNG</button></div></div><div class="card" style="display:flex;align-items:center;justify-content:center;"><canvas id="studio-canvas" width="460" height="460" style="max-width:100%;height:auto;border-radius:14px;"></canvas></div></div></div></section>
@@ -202,7 +202,8 @@
     const loadId = "loading_" + Date.now(); addBubble("ai", "Processing...", loadId);
     let reply = "";
     try {
-      const data = await apiRequest("/api/ai/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, model: document.getElementById("model-selector")?.value || "talivexa-gold-pro", lang: document.documentElement.lang || "en" }) });
+      // یہاں تبدیلی کی گئی ہے: /api/ai/chat کو /api/chat کر دیا گیا ہے
+      const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, model: document.getElementById("model-selector")?.value || "talivexa-gold-pro", lang: document.documentElement.lang || "en" }) });
       reply = data.reply || "No reply returned.";
       if (typeof data.creditsRemaining === "number") { appState.user.credits = data.creditsRemaining; safeSave("talivexa_user", appState.user); refreshAccountUI(); }
     } catch (error) { reply = "Could not connect to AI backend. Please check the backend API configuration and try again."; }
@@ -255,4 +256,4 @@
     if (!skipCredit && !spendLocalCredits(3)) return;
     const canvas = document.getElementById("studio-canvas"); if (!canvas) return;
     const context = canvas.getContext("2d"); if (!context) return;
-    const width = canvas.width; const height = 
+    const width = canvas.width; const h
