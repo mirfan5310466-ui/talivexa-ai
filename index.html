@@ -1,259 +1,56 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#050b14" />
-  <title>Talivexa AI — Smarter, Faster, Stronger</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talivexa AI Test</title>
+  <style>
+    body { background: #050b14; color: white; font-family: sans-serif; padding: 20px; }
+    input { padding: 10px; width: 70%; background: #111; color: white; border: 1px solid #333; border-radius: 5px; }
+    button { padding: 10px; background: #4a90e2; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    #output { margin-top: 20px; padding: 10px; background: #111; border: 1px solid #333; border-radius: 5px; min-height: 100px; }
+  </style>
 </head>
 <body>
-
-<div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleDrawer(false)"></div>
-<div class="app-shell">
-  <aside id="sidebar" class="sidebar">
-    <div class="brand-bar">
-      <a href="#" class="brand-identity" onclick="openSection('chat'); return false;">
-        <img src="logo.png" class="brand-logo-img" />
-        <div>
-          <div class="brand-title" style="font-weight: 800; font-style: italic;">Talivexa AI</div>
-        </div>
-      </a>
-      <button class="burger-btn" onclick="toggleDrawer(false)">✕</button>
-    </div>
-    
-    <button class="btn-new-session" onclick="startNewConversation()"><span>+ New Chat</span></button>
-    
-    <div class="sidebar-nav">
-      <div class="nav-group-title">AI Modules</div>
-      <button class="nav-btn active" data-sec="chat" onclick="openSection('chat')"><span class="icon">💬</span> AI Chat Assistant</button>
-      <button class="nav-btn" data-sec="search" onclick="openSection('search')"><span class="icon">🔍</span> AI Web Search</button>
-      <button class="nav-btn" data-sec="voice" onclick="openSection('voice')"><span class="icon">🎙️</span> AI Voice Assistant</button>
-      <button class="nav-btn" data-sec="image" onclick="openSection('image')"><span class="icon">🖼️</span> AI Image Studio</button>
-      <button class="nav-btn" data-sec="pdf" onclick="openSection('pdf')"><span class="icon">📄</span> PDF & Doc Analyzer</button>
-      <button class="nav-btn" data-sec="smart" onclick="openSection('smart')"><span class="icon">🛠️</span> Smart AI Tools</button>
-      
-      <div class="nav-group-title">Account, Plans & Founder</div>
-      <button class="nav-btn" data-sec="dashboard" onclick="openSection('dashboard')"><span class="icon">👥</span> User Dashboard</button>
-      <button class="nav-btn" data-sec="profile" onclick="openSection('profile')"><span class="icon">⚙️</span> Profile & Settings</button>
-      <button class="nav-btn" data-sec="plans" onclick="openSection('plans')"><span class="icon">👑</span> Subscription Plans</button>
-      <button class="nav-btn" data-sec="security" onclick="openSection('security')"><span class="icon">🛡️</span> Security & API Settings</button>
-      <button class="nav-btn" data-sec="founder" onclick="openSection('founder')"><span class="icon">⭐</span> Founder (Mr. Irfan)</button>
-      
-      <div class="nav-group-title">Chat History</div>
-      <div id="history-list"></div>
-    </div>
-    
-    <div class="sidebar-bottom">
-      <div class="credit-box">
-        <div class="credit-icon">🪙</div>
-        <div>
-          <div style="font-size:0.75rem;color:#a0aec0;">Credits Balance</div>
-          <div class="js-credits" style="font-size:1.1rem;font-weight:800;color:#fff;">1,250</div>
-        </div>
-        <div style="margin-left:auto;color:#4a90e2;">›</div>
-      </div>
-    </div>
-  </aside>
-
-  <div class="main-area">
-    <!-- نیا ٹاپ بار -->
-    <header class="topbar new-topbar">
-      <div class="topbar-group">
-        <button class="burger-btn" onclick="toggleDrawer(true)">☰</button>
-        <div class="top-nav-links">
-          <span style="color:#4a90e2;font-weight:700;cursor:pointer;"><span style="color:#fff;">🏠</span> Home</span>
-          <span style="cursor:pointer;">⭐ Features</span>
-          <span style="cursor:pointer;">ℹ️ About</span>
-          <span style="cursor:pointer;">👑 Pricing</span>
-          <span style="cursor:pointer;">✉️ Contact</span>
-        </div>
-      </div>
-      <div class="topbar-group">
-        <button class="btn-try-ai">Try Mr AI ✦</button>
-      </div>
-    </header>
-
-    <!-- چیٹ کا مرکزی حصہ -->
-    <main id="panel-chat" class="view-panel active">
-      <div class="chat-wrap">
-        <div id="chat-stream" class="chat-stream">
-          <div class="chat-hero-empty">
-            <img src="logo.png" alt="Talivexa AI" style="width: 120px; margin-bottom: 20px;" />
-            <h1 style="font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 10px; font-style: italic;">Talivexa <span style="color:#4a90e2;">AI</span></h1>
-            <p style="color: #a0aec0; font-size: 1.1rem; letter-spacing: 2px;">— Smarter • Faster • Stronger —</p>
-          </div>
-        </div>
-        
-        <div class="composer-shell">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <input id="chat-prompt-input" class="composer-input" placeholder="Message Talivexa AI..." onkeydown="if(event.key==='Enter'){submitChatPrompt();}" />
-            <button class="round-act" onclick="startVoiceCapture(true)">🎙️</button>
-            <button class="round-act send-blue" onclick="submitChatPrompt()">➤</button>
-          </div>
-          <div class="composer-bar">
-            <button class="mode-chip" onclick="toggleSearchMode()">🌐 Web Search</button>
-            <button class="mode-chip" onclick="openSection('pdf')">📄 PDF</button>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- باقی سیکشنز -->
-    <section id="panel-search" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Web Search</h2></div><div class="card"><label>Search Query</label><input id="search-box-input" type="text" class="field" /><button class="btn-gold" onclick="sendPresetPrompt(document.getElementById('search-box-input').value || 'Latest AI news'); toggleSearchMode();">Run Grounded Search</button></div></div></section>
-    <section id="panel-voice" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Voice Assistant</h2></div><div class="card"><button class="btn-gold" onclick="startVoiceCapture(false)">Start Microphone Capture</button><p id="voice-heard" style="margin-top:14px;color:#fdba74;font-weight:700;"></p><p id="voice-answer" style="margin-top:8px;white-space:pre-wrap;"></p></div></div></section>
-    <section id="panel-image" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Image Generation Studio</h2></div><div class="grid-2"><div class="card"><label>Prompt</label><textarea id="img-prompt" class="field" rows="3"></textarea><label>Color Palette</label><select id="img-style" class="field"><option value="gold_obsidian">Black & Gold</option></select><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-gold" onclick="generateStudioImage()">Generate</button><button class="btn-outline-gold" onclick="downloadStudioPNG()">Download PNG</button></div></div><div class="card" style="display:flex;align-items:center;justify-content:center;"><canvas id="studio-canvas" width="460" height="460" style="max-width:100%;height:auto;border-radius:14px;"></canvas></div></div></div></section>
-    <section id="panel-pdf" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>PDF & Document Analyzer</h2></div><div class="grid-2"><div class="card"><label>Select Document</label><input type="file" accept=".pdf,.txt,.md,.csv" class="field" onchange="readUploadedDoc(event)" /><div id="doc-status">No file selected</div><pre id="doc-preview"></pre></div><div class="card"><label>Ask About Document</label><input id="doc-q" type="text" class="field" /><button class="btn-gold" onclick="queryDocument()">Analyze</button><pre id="doc-ans"></pre></div></div></div></section>
-    <section id="panel-smart" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>Smart AI Tools</h2></div><div class="card"><label>Tool Mode</label><select id="smart-kind" class="field"><option value="script">Code</option><option value="copy">Copywriting</option><option value="summary">Summary</option></select><label>Topic</label><input id="smart-topic" type="text" class="field" /><button class="btn-gold" onclick="executeSmartTool()">Run Smart Tool</button><pre id="smart-out"></pre></div></div></section>
-    <section id="panel-dashboard" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>User Dashboard & Credits System</h2></div><div class="grid-3"><div class="card"><div>Account Holder</div><div class="js-username" style="font-size:1.25rem;font-weight:800;">Mr. Irfan</div><div class="js-plan" style="color:#facc15;font-size:0.78rem;">FREE PLAN</div></div><div class="card"><div>Remaining Credits</div><div class="js-credits" style="font-size:1.75rem;font-weight:800;color:#facc15;">100</div></div><div class="card"><div>Creator Attribution</div><div style="font-size:1.25rem;font-weight:800;">Created by Mr. Irfan</div></div></div></div></section>
-    <section id="panel-profile" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>User Profile & Settings</h2></div><div class="card" style="max-width:520px;"><label>Display Name</label><input id="prof-name" type="text" class="field" /><label>Email Address</label><input id="prof-email" type="email" class="field" /><button class="btn-gold" onclick="saveProfileSettings()">Save Settings</button></div></div></section>
-    <section id="panel-plans" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>Subscription Plans & Payment Structure</h2></div><div class="grid-3"><div class="card"><h3>Free</h3><div style="font-size:1.6rem;font-weight:800;color:#facc15;">$0</div><button class="btn-outline-gold" onclick="chooseSubscription('free')">Select Free</button></div><div class="card"><h3>Pro</h3><div style="font-size:1.6rem;font-weight:800;color:#facc15;">$19 / mo</div><button class="btn-gold" onclick="chooseSubscription('pro')">Upgrade to Pro</button></div><div class="card"><h3>Enterprise</h3><div style="font-size:1.6rem;font-weight:800;color:#facc15;">Custom</div><button class="btn-outline-gold" onclick="chooseSubscription('enterprise')">Select Enterprise</button></div></div></div></section>
-    <section id="panel-security" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>Security & Server-Side API Architecture</h2></div><div class="card"><ul><li><strong>Environment Secrets:</strong> Stored in .env</li><li><strong>API Key Security:</strong> Never exposed to browser</li></ul></div></div></section>
+  <h2>Talivexa AI - Test</h2>
+  <div>
+    <input type="text" id="chat-input" placeholder="Type here...">
+    <button onclick="testSend()">Send</button>
   </div>
-</div>
+  <div id="output">Output will appear here...</div>
 
-<script>
-  function safeGet(key, fallback = null) { try { return localStorage.getItem(key) === null ? fallback : localStorage.getItem(key); } catch (e) { return fallback; } }
-  function safeJSON(key, fallback) { try { const v = safeGet(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
-  function safeSave(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } }
+  <script>
+    async function testSend() {
+      const input = document.getElementById('chat-input').value;
+      const output = document.getElementById('output');
+      
+      if (!input) {
+        output.textContent = "Please type something first.";
+        return;
+      }
 
-  const appState = {
-    token: safeGet("talivexa_token", ""),
-    user: safeJSON("talivexa_user", null) || { name: "Mr. Irfan", email: "founder@talivexa.ai", plan: "free", credits: 100 },
-    chatId: null, chats: safeJSON("talivexa_chats", []), webSearchMode: false, docText: "", docName: "", installPromptEvent: null
-  };
+      output.textContent = "Sending to server...";
 
-  function initializeTalivexa() {
-    refreshAccountUI(); renderHistorySidebar(); renderCanvasSample(); initSW();
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeTalivexa);
-  else initializeTalivexa();
+      try {
+        // یہاں API کا راستہ ہے
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: input })
+        });
 
-  async function apiRequest(url, options = {}) {
-    const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-    if (appState.token) headers.Authorization = `Bearer ${appState.token}`;
-    const response = await fetch(url, { ...options, headers });
-    const contentType = response.headers.get("content-type") || "";
-    let data = {};
-    if (contentType.includes("application/json")) data = await response.json();
-    else { const text = await response.text(); data = { message: text }; }
-    if (!response.ok) throw new Error(data.message || `Request failed: ${response.status}`);
-    return data;
-  }
+        const data = await response.json();
+        
+        // اگر سرور سے جواب آیا تو یہاں دکھے گا
+        output.textContent = "Server Response: " + JSON.stringify(data);
 
-  function initSW() { if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {}); }
-
-  function toggleDrawer(force) {
-    const sidebar = document.getElementById("sidebar");
-    const backdrop = document.getElementById("sidebar-backdrop");
-    if (!sidebar || !backdrop) return;
-    const open = typeof force === "boolean" ? force : !sidebar.classList.contains("open");
-    sidebar.classList.toggle("open", open); backdrop.classList.toggle("active", open);
-  }
-
-  function openSection(sectionId) {
-    document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
-    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-    const panel = document.getElementById("panel-" + sectionId);
-    const button = document.querySelector(`.nav-btn[data-sec="${sectionId}"]`);
-    if (panel) panel.classList.add("active"); if (button) button.classList.add("active");
-    if (window.innerWidth <= 960) toggleDrawer(false);
-  }
-
-  function refreshAccountUI() {
-    if (!appState.user) return;
-    document.querySelectorAll(".js-credits").forEach(el => el.textContent = appState.user.plan === "enterprise" ? "∞" : Number(appState.user.credits || 0));
-    document.querySelectorAll(".js-username").forEach(el => el.textContent = appState.user.name || "User");
-    document.querySelectorAll(".js-plan").forEach(el => el.textContent = (appState.user.plan || "free").toUpperCase() + " PLAN");
-  }
-
-  function spendLocalCredits(amount) {
-    amount = Math.max(0, Number(amount) || 0); if (appState.user.plan === "enterprise") return true;
-    const credits = Number(appState.user.credits || 0);
-    if (credits < amount) { alert("Not enough credits."); openSection("plans"); return false; }
-    appState.user.credits = credits - amount; safeSave("talivexa_user", appState.user); refreshAccountUI(); return true;
-  }
-
-  function openAuth(mode = "login") { alert("Authentication system requires backend setup. Coming soon!"); }
-
-  function toggleSearchMode() { appState.webSearchMode = !appState.webSearchMode; const chip = document.getElementById("search-mode-chip"); if (chip) chip.classList.toggle("active-search", appState.webSearchMode); }
-
-  function startNewConversation() {
-    appState.chatId = null;
-    const stream = document.getElementById("chat-stream"); const template = document.getElementById("chat-empty-tpl");
-    if (stream && template) stream.innerHTML = template.innerHTML; openSection("chat");
-  }
-
-  function sendPresetPrompt(text) { const input = document.getElementById("chat-prompt-input"); if (input) { input.value = text; submitChatPrompt(); } }
-
-  async function submitChatPrompt() {
-    const input = document.getElementById("chat-prompt-input"); if (!input) return;
-    const prompt = input.value.trim(); if (!prompt) return;
-    if (!spendLocalCredits(appState.webSearchMode ? 2 : 1)) return;
-    const stream = document.getElementById("chat-stream"); if (!stream) return;
-    input.value = ""; const empty = stream.querySelector(".chat-hero-empty"); if (empty) empty.remove();
-    if (!appState.chatId) { appState.chatId = "session_" + Date.now(); appState.chats.unshift({ id: appState.chatId, title: prompt.slice(0, 36), items: [] }); }
-    addBubble("user", prompt); saveChatItem("user", prompt);
-    const loadId = "loading_" + Date.now(); addBubble("ai", "Processing...", loadId);
-    let reply = "";
-    try {
-      // یہاں تبدیلی کی گئی ہے: /api/ai/chat کو /api/chat کر دیا گیا ہے
-      const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, model: document.getElementById("model-selector")?.value || "talivexa-gold-pro", lang: document.documentElement.lang || "en" }) });
-      reply = data.reply || "No reply returned.";
-      if (typeof data.creditsRemaining === "number") { appState.user.credits = data.creditsRemaining; safeSave("talivexa_user", appState.user); refreshAccountUI(); }
-    } catch (error) { reply = "Could not connect to AI backend. Please check the backend API configuration and try again."; }
-    const loadingElement = document.getElementById(loadId); if (loadingElement) loadingElement.remove();
-    addBubble("ai", reply); saveChatItem("ai", reply); renderHistorySidebar();
-  }
-
-  function addBubble(role, text, id = null) {
-    const stream = document.getElementById("chat-stream"); if (!stream) return;
-    const row = document.createElement("div"); row.className = `bubble-row ${role}`; if (id) row.id = id;
-    const avatar = document.createElement("div"); avatar.className = "avatar-badge"; avatar.textContent = role === "ai" ? "T" : (appState.user.name || "U")[0].toUpperCase();
-    const bubble = document.createElement("div"); bubble.className = "bubble-text"; bubble.textContent = String(text);
-    row.appendChild(avatar); row.appendChild(bubble); stream.appendChild(row); stream.scrollTop = stream.scrollHeight;
-  }
-
-  function saveChatItem(role, text) {
-    const chat = appState.chats.find(item => item.id === appState.chatId); if (!chat) return;
-    if (!Array.isArray(chat.items)) chat.items = []; chat.items.push({ role, text });
-    appState.chats = appState.chats.slice(0, 25); safeSave("talivexa_chats", appState.chats);
-  }
-
-  function renderHistorySidebar() {
-    const box = document.getElementById("history-list"); if (!box) return; box.innerHTML = "";
-    appState.chats.forEach(chat => {
-      const element = document.createElement("div"); element.className = "history-entry"; element.textContent = "▸ " + chat.title;
-      element.addEventListener("click", () => { appState.chatId = chat.id; const stream = document.getElementById("chat-stream"); if (!stream) return; stream.innerHTML = ""; (chat.items || []).forEach(item => addBubble(item.role, item.text)); openSection("chat"); });
-      box.appendChild(element);
-    });
-  }
-
-  function startVoiceCapture(toChat = false) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) { alert("Voice recognition is not supported in this browser."); return; }
-    const voiceRec = new SpeechRecognition(); const localeMap = { en: "en-US", ur: "ur-PK", ar: "ar-SA", hi: "hi-IN" };
-    voiceRec.lang = localeMap[document.documentElement.lang] || "en-US";
-    voiceRec.onresult = (event) => {
-      const spoken = event.results[0][0].transcript;
-      if (toChat) { const input = document.getElementById("chat-prompt-input"); if (input) { input.value = spoken; submitChatPrompt(); } }
-      else { const heard = document.getElementById("voice-heard"); const answer = document.getElementById("voice-answer"); if (heard) heard.textContent = "Heard: " + spoken; const output = "You said: " + spoken; if (answer) answer.textContent = output; if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(output)); } }
-    };
-    voiceRec.onerror = (event) => alert("Voice recognition error: " + event.error);
-    try { voiceRec.start(); } catch (error) {}
-  }
-
-  function renderCanvasSample() { generateStudioImage("Talivexa Golden Crown Core", "gold_obsidian", true); }
-
-  async function generateStudioImage(overridePrompt, overrideStyle, skipCredit = false) {
-    const prompt = overridePrompt || document.getElementById("img-prompt")?.value.trim() || "Golden Temple in Dark Obsidian";
-    const style = overrideStyle || document.getElementById("img-style")?.value;
-    if (!skipCredit && !spendLocalCredits(3)) return;
-    const canvas = document.getElementById("studio-canvas"); if (!canvas) return;
-    const context = canvas.getContext("2d"); if (!context) return;
-    const width = canvas.width; const h
+      } catch (error) {
+        // اگر کوئی ایرر آیا تو یہاں دکھے گا
+        output.textContent = "Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
