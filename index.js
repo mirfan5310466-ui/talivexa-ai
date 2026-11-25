@@ -53,9 +53,10 @@ app.get('/api/health', (req, res) => {
 // Authentication routes
 app.use('/api/auth', authRoutes);
 
-// AI routes
-// Example: router.post('/chat') => /api/chat
+// AI routes: support both frontend URL conventions.
+// POST /api/chat and POST /api/ai/chat both reach routes/aiRoutes.js
 app.use('/api', aiRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Vercel serverless export
 module.exports = app;
