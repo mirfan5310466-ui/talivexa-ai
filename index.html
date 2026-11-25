@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Talivexa AI</title>
+  <meta name="theme-color" content="#050b14" />
+  <title>Talivexa AI — Smarter, Faster, Stronger</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,52 +17,94 @@
 <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="toggleDrawer(false)"></div>
 <div class="app-shell">
   <aside id="sidebar" class="sidebar">
-    <div class="brand-bar"><a href="#" class="brand-identity" onclick="openSection('chat'); return false;"><img src="talivexa-logo.svg" class="brand-logo-img" /><div><div class="brand-title">Talivexa AI</div><div class="brand-sub">Created by Mr. Irfan</div></div></a><button class="burger-btn" onclick="toggleDrawer(false)">✕</button></div>
-    <button class="btn-new-session" onclick="startNewConversation()"><span>New Chat</span><span>+</span></button>
+    <div class="brand-bar">
+      <a href="#" class="brand-identity" onclick="openSection('chat'); return false;">
+        <img src="logo.png" class="brand-logo-img" />
+        <div>
+          <div class="brand-title" style="font-weight: 800; font-style: italic;">Talivexa AI</div>
+        </div>
+      </a>
+      <button class="burger-btn" onclick="toggleDrawer(false)">✕</button>
+    </div>
+    
+    <button class="btn-new-session" onclick="startNewConversation()"><span>+ New Chat</span></button>
+    
     <div class="sidebar-nav">
       <div class="nav-group-title">AI Modules</div>
-      <button class="nav-btn active" data-sec="chat" onclick="openSection('chat')"><span class="dot dot-chat"></span> AI Chat Assistant</button>
-      <button class="nav-btn" data-sec="search" onclick="openSection('search')"><span class="dot dot-search"></span> AI Web Search</button>
-      <button class="nav-btn" data-sec="voice" onclick="openSection('voice')"><span class="dot dot-voice"></span> AI Voice Assistant</button>
-      <button class="nav-btn" data-sec="image" onclick="openSection('image')"><span class="dot dot-image"></span> AI Image Studio</button>
-      <button class="nav-btn" data-sec="pdf" onclick="openSection('pdf')"><span class="dot dot-pdf"></span> PDF & Doc Analyzer</button>
-      <button class="nav-btn" data-sec="smart" onclick="openSection('smart')"><span class="dot dot-smart"></span> Smart AI Tools</button>
+      <button class="nav-btn active" data-sec="chat" onclick="openSection('chat')"><span class="icon">💬</span> AI Chat Assistant</button>
+      <button class="nav-btn" data-sec="search" onclick="openSection('search')"><span class="icon">🔍</span> AI Web Search</button>
+      <button class="nav-btn" data-sec="voice" onclick="openSection('voice')"><span class="icon">🎙️</span> AI Voice Assistant</button>
+      <button class="nav-btn" data-sec="image" onclick="openSection('image')"><span class="icon">🖼️</span> AI Image Studio</button>
+      <button class="nav-btn" data-sec="pdf" onclick="openSection('pdf')"><span class="icon">📄</span> PDF & Doc Analyzer</button>
+      <button class="nav-btn" data-sec="smart" onclick="openSection('smart')"><span class="icon">🛠️</span> Smart AI Tools</button>
+      
       <div class="nav-group-title">Account, Plans & Founder</div>
-      <button class="nav-btn" data-sec="dashboard" onclick="openSection('dashboard')"><span>◈</span> User Dashboard</button>
-      <button class="nav-btn" data-sec="profile" onclick="openSection('profile')"><span>◉</span> Profile & Settings</button>
-      <button class="nav-btn" data-sec="plans" onclick="openSection('plans')"><span>❖</span> Subscription Plans</button>
-      <button class="nav-btn" data-sec="security" onclick="openSection('security')"><span>⛨</span> Security & API Settings</button>
-      <button class="nav-btn" data-sec="founder" onclick="openSection('founder')"><span>★</span> Founder (Mr. Irfan)</button>
+      <button class="nav-btn" data-sec="dashboard" onclick="openSection('dashboard')"><span class="icon">👥</span> User Dashboard</button>
+      <button class="nav-btn" data-sec="profile" onclick="openSection('profile')"><span class="icon">⚙️</span> Profile & Settings</button>
+      <button class="nav-btn" data-sec="plans" onclick="openSection('plans')"><span class="icon">👑</span> Subscription Plans</button>
+      <button class="nav-btn" data-sec="security" onclick="openSection('security')"><span class="icon">🛡️</span> Security & API Settings</button>
+      <button class="nav-btn" data-sec="founder" onclick="openSection('founder')"><span class="icon">⭐</span> Founder (Mr. Irfan)</button>
+      
       <div class="nav-group-title">Chat History</div>
       <div id="history-list"></div>
     </div>
+    
     <div class="sidebar-bottom">
-      <div class="credit-row"><span>Credits Balance</span><span class="credit-val js-credits">100</span></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <div><div class="js-username" style="font-size:0.84rem;font-weight:700;">Mr. Irfan</div><div class="js-plan" style="font-size:0.72rem;color:#eab308;">FREE PLAN</div></div>
-        <div style="display:flex;gap:5px;"><button class="btn-outline-gold" style="padding:5px 8px;font-size:0.74rem;" onclick="openAuth('login')">Login</button><button class="btn-gold" style="padding:5px 8px;font-size:0.74rem;" onclick="openAuth('signup')">Sign Up</button></div>
+      <div class="credit-box">
+        <div class="credit-icon">🪙</div>
+        <div>
+          <div style="font-size:0.75rem;color:#a0aec0;">Credits Balance</div>
+          <div class="js-credits" style="font-size:1.1rem;font-weight:800;color:#fff;">1,250</div>
+        </div>
+        <div style="margin-left:auto;color:#4a90e2;">›</div>
       </div>
     </div>
   </aside>
+
   <div class="main-area">
-    <header class="topbar">
-      <div class="topbar-group"><button class="burger-btn" onclick="toggleDrawer(true)">☰</button><select id="model-selector" class="select-ctrl"><option value="talivexa-gold-pro">Talivexa Gold Pro</option><option value="talivexa-fast">Talivexa Instant</option></select></div>
-      <div class="topbar-group"><button id="pwa-install-btn" class="btn-gold btn-install" style="padding:6px 11px;font-size:0.78rem;" onclick="triggerPWAInstall()">Install App</button><select id="lang-selector" class="select-ctrl"><option value="en">English</option><option value="ur">اردو (RTL)</option><option value="ar">العربية (RTL)</option></select></div>
+    <!-- نیا ٹاپ بار (آپ کی تصویر کے مطابق) -->
+    <header class="topbar new-topbar">
+      <div class="topbar-group">
+        <button class="burger-btn" onclick="toggleDrawer(true)">☰</button>
+        <div class="top-nav-links">
+          <span style="color:#4a90e2;font-weight:700;cursor:pointer;"><span style="color:#fff;">🏠</span> Home</span>
+          <span style="cursor:pointer;">⭐ Features</span>
+          <span style="cursor:pointer;">ℹ️ About</span>
+          <span style="cursor:pointer;">👑 Pricing</span>
+          <span style="cursor:pointer;">✉️ Contact</span>
+        </div>
+      </div>
+      <div class="topbar-group">
+        <button class="btn-try-ai">Try Mr AI ✦</button>
+      </div>
     </header>
+
+    <!-- چیٹ کا مرکزی حصہ -->
     <main id="panel-chat" class="view-panel active">
       <div class="chat-wrap">
         <div id="chat-stream" class="chat-stream">
-          <div class="chat-hero-empty"><img src="talivexa-logo.svg" alt="Talivexa AI" /><h1>Talivexa AI — Intelligence Reimagined</h1><p style="color:#b5ad9c;font-size:0.9rem;margin-top:4px;">Created by Mr. Irfan • Black & Gold Multimodal AI Platform</p></div>
+          <div class="chat-hero-empty">
+            <img src="logo.png" alt="Talivexa AI" style="width: 120px; margin-bottom: 20px;" />
+            <h1 style="font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 10px; font-style: italic;">Talivexa <span style="color:#4a90e2;">AI</span></h1>
+            <p style="color: #a0aec0; font-size: 1.1rem; letter-spacing: 2px;">— Smarter • Faster • Stronger —</p>
+          </div>
         </div>
+        
         <div class="composer-shell">
-          <textarea id="chat-prompt-input" class="composer-input" rows="1" placeholder="Message Talivexa AI..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitChatPrompt();}"></textarea>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <input id="chat-prompt-input" class="composer-input" placeholder="Message Talivexa AI..." onkeydown="if(event.key==='Enter'){submitChatPrompt();}" />
+            <button class="round-act" onclick="startVoiceCapture(true)">🎙️</button>
+            <button class="round-act send-blue" onclick="submitChatPrompt()">➤</button>
+          </div>
           <div class="composer-bar">
-            <div style="display:flex;gap:7px;"><button id="search-mode-chip" class="mode-chip" onclick="toggleSearchMode()">● Web Search</button><button class="mode-chip" onclick="openSection('pdf')">● PDF</button></div>
-            <div style="display:flex;gap:7px;"><button class="round-act" onclick="startVoiceCapture(true)">🎙</button><button class="round-act send-gold" onclick="submitChatPrompt()">➤</button></div>
+            <button class="mode-chip" onclick="toggleSearchMode()">🌐 Web Search</button>
+            <button class="mode-chip" onclick="openSection('pdf')">📄 PDF</button>
           </div>
         </div>
       </div>
     </main>
+
+    <!-- باقی سیکشنز (جیسے Search, Voice, Dashboard وغیرہ) -->
     <section id="panel-search" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Web Search</h2></div><div class="card"><label>Search Query</label><input id="search-box-input" type="text" class="field" /><button class="btn-gold" onclick="sendPresetPrompt(document.getElementById('search-box-input').value || 'Latest AI news'); toggleSearchMode();">Run Grounded Search</button></div></div></section>
     <section id="panel-voice" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Voice Assistant</h2></div><div class="card"><button class="btn-gold" onclick="startVoiceCapture(false)">Start Microphone Capture</button><p id="voice-heard" style="margin-top:14px;color:#fdba74;font-weight:700;"></p><p id="voice-answer" style="margin-top:8px;white-space:pre-wrap;"></p></div></div></section>
     <section id="panel-image" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Image Generation Studio</h2></div><div class="grid-2"><div class="card"><label>Prompt</label><textarea id="img-prompt" class="field" rows="3"></textarea><label>Color Palette</label><select id="img-style" class="field"><option value="gold_obsidian">Black & Gold</option></select><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-gold" onclick="generateStudioImage()">Generate</button><button class="btn-outline-gold" onclick="downloadStudioPNG()">Download PNG</button></div></div><div class="card" style="display:flex;align-items:center;justify-content:center;"><canvas id="studio-canvas" width="460" height="460" style="max-width:100%;height:auto;border-radius:14px;"></canvas></div></div></div></section>
@@ -207,7 +255,4 @@
     if (!skipCredit && !spendLocalCredits(3)) return;
     const canvas = document.getElementById("studio-canvas"); if (!canvas) return;
     const context = canvas.getContext("2d"); if (!context) return;
-    const width = canvas.width; const height = canvas.height;
-    const palettes = { gold_obsidian: ["#070709", "#3b2c06", "#eab308", "#fef08a"] };
-    const palette = palettes[style] || palettes.gold_obsidian;
-    const gradient = context.createLinearGradient(0, 0, width, height); gradient.addColorStop(0, palette[0]); gradient.addColorStop(0.5, palette[1]); gradient.addColorStop(1, palette[0]); context.fillStyle = gradient; context.fillRect(0, 
+    const width = canvas.width; const height = 
