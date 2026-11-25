@@ -70,7 +70,6 @@
   </aside>
 
   <div class="main-area">
-    <!-- نیا ٹاپ بار -->
     <header class="topbar new-topbar">
       <div class="topbar-group">
         <button class="burger-btn" onclick="toggleDrawer(true)">☰</button>
@@ -83,14 +82,12 @@
         </div>
       </div>
       <div class="topbar-group" style="display: flex; gap: 10px; align-items: center;">
-        <!-- لاگ ان اور سائن اپ کے بٹن -->
         <button class="btn-outline-gold" onclick="openAuth('login')" style="padding: 8px 16px; font-size: 0.85rem;">Login</button>
         <button class="btn-gold" onclick="openAuth('signup')" style="padding: 8px 16px; font-size: 0.85rem;">Sign Up</button>
         <button class="btn-try-ai">Try Mr AI ✦</button>
       </div>
     </header>
 
-    <!-- چیٹ کا مرکزی حصہ -->
     <main id="panel-chat" class="view-panel active">
       <div class="chat-wrap">
         <div id="chat-stream" class="chat-stream">
@@ -103,9 +100,7 @@
         
         <div class="composer-shell">
           <div style="display:flex; align-items:center; gap:10px;">
-            <!-- تصویر/فائل شامل کرنے کا + بٹن -->
             <button class="round-act" onclick="openSection('image')" title="AI Image Studio">+</button>
-            
             <input id="chat-prompt-input" class="composer-input" placeholder="Message Talivexa AI..." onkeydown="if(event.key==='Enter'){submitChatPrompt();}" />
             <button class="round-act" onclick="startVoiceCapture(true)">🎙️</button>
             <button class="round-act send-blue" onclick="submitChatPrompt()">➤</button>
@@ -118,7 +113,6 @@
       </div>
     </main>
 
-    <!-- باقی سیکشنز -->
     <section id="panel-search" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Web Search</h2></div><div class="card"><label>Search Query</label><input id="search-box-input" type="text" class="field" /><button class="btn-gold" onclick="sendPresetPrompt(document.getElementById('search-box-input').value || 'Latest AI news'); toggleSearchMode();">Run Grounded Search</button></div></div></section>
     <section id="panel-voice" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Voice Assistant</h2></div><div class="card"><button class="btn-gold" onclick="startVoiceCapture(false)">Start Microphone Capture</button><p id="voice-heard" style="margin-top:14px;color:#fdba74;font-weight:700;"></p><p id="voice-answer" style="margin-top:8px;white-space:pre-wrap;"></p></div></div></section>
     <section id="panel-image" class="view-panel"><div class="container-box"><div class="panel-heading"><h2>AI Image Generation Studio</h2></div><div class="grid-2"><div class="card"><label>Prompt</label><textarea id="img-prompt" class="field" rows="3"></textarea><label>Color Palette</label><select id="img-style" class="field"><option value="gold_obsidian">Black & Gold</option></select><div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-gold" onclick="generateStudioImage()">Generate</button><button class="btn-outline-gold" onclick="downloadStudioPNG()">Download PNG</button></div></div><div class="card" style="display:flex;align-items:center;justify-content:center;"><canvas id="studio-canvas" width="460" height="460" style="max-width:100%;height:auto;border-radius:14px;"></canvas></div></div></div></section>
@@ -132,7 +126,6 @@
 </div>
 
 <script>
-  // یہاں سے آپ کا سارا JavaScript کوڈ شروع ہوتا ہے
   function safeGet(key, fallback = null) { try { return localStorage.getItem(key) === null ? fallback : localStorage.getItem(key); } catch (e) { return fallback; } }
   function safeJSON(key, fallback) { try { const v = safeGet(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
   function safeSave(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; } }
@@ -143,12 +136,10 @@
     chatId: null, chats: safeJSON("talivexa_chats", []), webSearchMode: false, docText: "", docName: "", installPromptEvent: null
   };
 
-  // زبان تبدیل کرنے کا فنکشن
   function changeLanguage(langCode) {
     document.documentElement.lang = langCode;
     document.documentElement.dir = (langCode === 'ur' || langCode === 'ar') ? 'rtl' : 'ltr';
     safeSave("talivexa_lang", langCode);
-    // یہاں آپ آگے چاہیں تو ترجمے کا سسٹم لگا سکتے ہیں
     console.log("Language changed to: " + langCode);
   }
 
@@ -157,7 +148,6 @@
     const langEl = document.getElementById("lang-selector");
     if (langEl) langEl.value = savedLang;
     changeLanguage(savedLang);
-
     refreshAccountUI(); renderHistorySidebar(); renderCanvasSample(); initSW();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeTalivexa);
@@ -231,7 +221,7 @@
     const loadId = "loading_" + Date.now(); addBubble("ai", "Processing...", loadId);
     let reply = "";
     try {
-      const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, model: document.getElementById("model-selector")?.value || "talivexa-gold-pro", lang: document.documentElement.lang || "en" }) });
+      const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, lang: document.documentElement.lang || "en" }) });
       reply = data.reply || "No reply returned.";
       if (typeof data.creditsRemaining === "number") { appState.user.credits = data.creditsRemaining; safeSave("talivexa_user", appState.user); refreshAccountUI(); }
     } catch (error) { reply = "Could not connect to AI backend. Please check the backend API configuration and try again."; }
@@ -265,12 +255,20 @@
   function startVoiceCapture(toChat = false) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) { alert("Voice recognition is not supported in this browser."); return; }
-    const voiceRec = new SpeechRecognition(); const localeMap = { en: "en-US", ur: "ur-PK", ar: "ar-SA", 
+    const voiceRec = new SpeechRecognition(); const localeMap = { en: "en-US", ur: "ur-PK", ar: "ar-SA", hi: "hi-IN" };
     voiceRec.lang = localeMap[document.documentElement.lang] || "en-US";
     voiceRec.onresult = (event) => {
       const spoken = event.results[0][0].transcript;
       if (toChat) { const input = document.getElementById("chat-prompt-input"); if (input) { input.value = spoken; submitChatPrompt(); } }
-      else { const heard = document.getElementById("voice-heard"); const answer = document.getElementById("voice-answer"); if (heard) heard.textContent = "Heard: " + spoken; const output = "You said: " + spoken; if (answer) answer.textContent = output; if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(output)); } }
+      else { const heard = document.getElementById("voice-heard"); const answer = documeconst answer = document.getElementById("voice-answer"); 
+        if (heard) heard.textContent = "Heard: " + spoken; 
+        const output = "You said: " + spoken; 
+        if (answer) answer.textContent = output; 
+        if ("speechSynthesis" in window) { 
+          window.speechSynthesis.cancel(); 
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(output)); 
+        } 
+      }
     };
     voiceRec.onerror = (event) => alert("Voice recognition error: " + event.error);
     try { voiceRec.start(); } catch (error) {}
