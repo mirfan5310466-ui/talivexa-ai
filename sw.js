@@ -1,17 +1,15 @@
-
 const CACHE_NAME = 'talivexa-ai-cache-v4';
 
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/styles.css',
-  '/js/i18n.js',
-  '/js/app.js',
+  '/i18n.js',
+  '/app.js',
   '/manifest.json',
   '/talivexa-logo.svg',
-  '/assets/icons/icon-192x192.png',
-  '/assets/icons/icon-512x512.png',
-  '/assets/images/founder-placeholder.png'
+  '/icon-192x192.png',
+  '/icon-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {
