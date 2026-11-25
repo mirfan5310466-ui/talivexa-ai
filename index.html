@@ -202,7 +202,6 @@
     const loadId = "loading_" + Date.now(); addBubble("ai", "Processing...", loadId);
     let reply = "";
     try {
-      // یہاں API کا راستہ /api/chat ہے
       const data = await apiRequest("/api/chat", { method: "POST", body: JSON.stringify({ prompt, webSearch: appState.webSearchMode, model: document.getElementById("model-selector")?.value || "talivexa-gold-pro", lang: document.documentElement.lang || "en" }) });
       reply = data.reply || "No reply returned.";
       if (typeof data.creditsRemaining === "number") { appState.user.credits = data.creditsRemaining; safeSave("talivexa_user", appState.user); refreshAccountUI(); }
@@ -258,4 +257,5 @@
     const context = canvas.getContext("2d"); if (!context) return;
     const width = canvas.width; const height = canvas.height;
 
-    cons
+    const palettes = {
+      gold_obsidian: ["#0
