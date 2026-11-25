@@ -1,6 +1,6 @@
 async function generateAIResponse({ prompt, webSearch, lang }) {
   // نام بدل کر AI_API_KEY کر دیا گیا ہے تاکہ ویسل والی چابی مل سکے
-  const apiKey = process.env.AI_API_KEY; 
+  const apiKey = process.env.AI_API_KEY || process.env.AI_PROVIDER_API_KEY; 
   const model = process.env.AI_MODEL_NAME || 'gemini-2.5-flash';
 
   if (!apiKey) {
