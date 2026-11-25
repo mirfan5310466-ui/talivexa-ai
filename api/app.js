@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
+// یہاں راستے (paths) ٹھیک کیے گئے ہیں
 const authRoutes = require('../routes/authRoutes');
 const aiRoutes = require('../routes/aiRoutes');
 
@@ -31,12 +32,9 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        console.log("CORS Warning: Origin not allowed ->", origin);
-        callback(null, true); 
-      }
+      
+      // ڈیبگنگ کے لیے تمام origins کو allow کر رہے ہیں
+      callback(null, true); 
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
